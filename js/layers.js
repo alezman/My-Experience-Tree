@@ -129,9 +129,9 @@ addLayer("p", {
             effect() {
                 if (hasChallenge('t', 12)) return player.e.points.add(1).pow(0.25)
                 if (inChallenge('t', 11)) return player.e.points.add(1).pow(0.05)
-                if (hasUpgrade('t', 23)) return player.e.points.add(1).pow(0.1)
+                if (hasUpgrade('e', 23)) return player.e.points.add(1).pow(0.2)
                 else
-                return player.e.points.add(1).pow(0.995).min(new Decimal (530.00))
+                return player.e.points.add(1).pow(0.9995).min(530)
             },
             effectDisplay() { return format(upgradeEffect('p', 23))+"x"},
             unlocked() {
@@ -209,7 +209,7 @@ addLayer("e", {
         },
         13: {
             title: "A Theme",
-            description: "You set a theme for your second game, which you think it's going to succeed. You get a bonus at Prestige gain.",
+            description: "You got an idea for a new theme, for your new game. More P.Point production.",
             cost: new Decimal (3),
             effect() {
                 return player.points.add(1).pow(0.12)
@@ -267,7 +267,8 @@ addLayer("e", {
             },
             unlocked() {
                 if (hasMilestone('t', 3)) return true
-                else return false
+                else 
+                return false
             },
         },
         15: {
@@ -283,6 +284,10 @@ addLayer("e", {
             title: "Challenges Problem",
             description: "You keep on failing trying to make a challenge. Unlocks a new layer.",
             cost: new Decimal(5e60),
+            unlocked() {
+                if (hasUpgrade('e', 15)) return true
+                else return false
+            }
         },
     },
     hotkeys: [
