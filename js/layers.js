@@ -222,6 +222,17 @@ addLayer("e", {
                 return false
             },
         },
+        24: {
+            title: "Back at it",
+            description: "You're back at your GitHub project, and you decide you should make a powerful upgrade.",
+            cost: new Decimal (1e30),
+            effect() {
+                return player.t.points.add(1).pow(0.5)
+            },
+            effectDisplay() {
+                return format(upgradeEffect('e', 24))+"x"
+            }
+        }
     },
     hotkeys: [
         {key: "e", description: "E: Reset for experience.", onPress(){if (canReset(this.layer)) doReset(this.layer)}},

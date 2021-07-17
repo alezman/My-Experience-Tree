@@ -8,13 +8,13 @@ let modInfo = {
 	discordName: "",
 	discordLink: "",
 	initialStartPoints: new Decimal (5), // Used for hard resets and new players
-	offlineLimit: 1,  // In hours
+	offlineLimit: 1000,  // In hours
 }
 
 // Set your version in num and name
 let VERSION = {
-	num: "1.1",
-	name: "Balancing the Game.",
+	num: "1.2",
+	name: "Evil Thoughts.",
 }
 
 let changelog = `<h1>Changelog:</h1><br>
@@ -23,7 +23,10 @@ let changelog = `<h1>Changelog:</h1><br>
 		- Released the game.<br>
 		- Accidentally released a game-breaking upgrade<br>
 		<br><h3>v1.1</h3><br>
-		- Fixed the game-breaking upgrade adding a hardcap.<br>`
+		- Fixed the game-breaking upgrade adding a hardcap.<br>
+		<br><h3>v1.2</h3><br>
+		- Added Thoughts, and added two challenges.
+		- More Upgrades!`
 
 let winText = `Congratulations! You have reached the end and beaten this game, but for now...`
 
@@ -53,6 +56,7 @@ function getPointGen() {
 	if (hasUpgrade('p', 23)) gain = gain.times(upgradeEffect('p', 23))
 	if (inChallenge('t', 11)) gain = gain.times(0.2)
 	if (hasChallenge('t', 11)) gain = gain.times(3)
+	if (hasUpgrade('e', 24)) gain = gain.times(upgradeEffect('p', 24))
 	return gain
 }
 
