@@ -8,34 +8,45 @@ let modInfo = {
 	discordName: "",
 	discordLink: "",
 	initialStartPoints: new Decimal (5), // Used for hard resets and new players
-	offlineLimit: 1000,  // In hours
+	offlineLimit: 72,  // In hours
 }
 
 // Set your version in num and name
 let VERSION = {
-	num: "1.4",
-	name: "Support",
+	num: "1.5.1",
+	name: "Smaller Fixes",
 }
 
 let changelog = `<h1>Changelog:</h1><br>
 	<h3>v1.0</h3><br>
+	<h6>The Release</h6>
 		- Added Prestige Upgrades.<br>
 		- Released the game.<br>
 		- Accidentally released a game-breaking upgrade<br>
 		<br><h3>v1.1</h3><br>
+		<h6>Anti-Inflation</h6>
 		- Fixed the game-breaking upgrade adding a hardcap.<br>
 		<br><h3>v1.2</h3><br>
+		<h6>Evil Thoughts</h6>
 		- Added Thoughts, and added two challenges.<br>
 		- More Upgrades!<br>
 		<br><h3>v1.3</h3><br>
+		<h6>Ideas...</h6>
 		- Added Ideas and Lesser Ideas. <br>
 		- Added a new powerful upgrade. <br>
 		- Fixed some glitches and bugs. <br>
 		<br><h3>v1.4</h3><br>
+		<h6>The End?</h6>
 		- Added the last layer <br>
 		- Added the final upgrades. <br>
-		- lol ez finished the game <br>
-		- tell me if any bugs smh`
+		<br><h3><b>v1.5</b></h3><br>
+		<h6>Huge Fixes</h6>
+		- Changed a lot of Upgrade Descriptions, and nerfed the game overall. <h5>(Sorry, lore will soon be re-added in another tab.)</h5>
+		- Upgrades now use a more balanced formula, and therefore had to lower a lot of requirements.<br>
+		- <b>Finally</b> removed the Lesser Ideas' clickable (if you ever managed to see it), and added 2 buyables instead. Also, LI is now a proper row 2 layer.<br>
+		<br><h3><b>v1.5.1</b></h3>
+		<h6>Smaller Fixes</h6>
+		- Soon to come...<br>`
 
 let winText = `Congratulations! You have reached the end and beaten this game, but for now...`
 
@@ -56,19 +67,19 @@ function canGenPoints(){
 function getPointGen() {
 	if(!canGenPoints())
 		return new Decimal(0)
-
-	let gain = new Decimal(0)
-	if (hasUpgrade('p', 11)) gain = gain.add(upgradeEffect('p', 11))
+    if (!hasUpgrade('p',11)) return new Decimal(0)
+	let gain = new Decimal(1)
 	if (hasUpgrade('p', 12)) gain = gain.times(upgradeEffect('p', 12))
 	if (hasUpgrade('p', 13)) gain = gain.times(upgradeEffect('p', 13))
+	if (hasUpgrade('p',14)) gain = gain.times(upgradeEffect('p',14))
 	if (hasUpgrade('p', 22)) gain = gain.times(upgradeEffect('p', 22))
 	if (hasUpgrade('p', 23)) gain = gain.times(upgradeEffect('p', 23))
 	if (inChallenge('t', 11)) gain = gain.times(0.2)
 	if (hasChallenge('t', 11)) gain = gain.times(3)
 	if (hasUpgrade('e', 24)) gain = gain.times(upgradeEffect('e', 24))
 	gain = gain.times(layers.t.effect())
-	if (player.li.level1 > 1) gain = gain.times(clickableEffect('li', 11)).add(player.li.level1)
 	if (hasUpgrade('e', 15)) gain = gain.pow(1.5)
+	if (getBuyableAmount('li',11).gte(1)) gain = gain.times(buyableEffect('li',11))
 	return gain
 }
 
@@ -78,12 +89,12 @@ function addedPlayerData() { return {
 
 // Display extra things at the top of the page
 var displayThings = [
-	"Reach 1.79e308 points to finish the game!"
+	"Reach 1.79e308 points to finish the game."
 ]
 
 // Determines when the game "ends"
 function isEndgame() {
-	return player.points.gte(new Decimal("1.797693143e308"))
+	return player.points.gte(new Decimal(2).pow(1024))
 }
 
 
