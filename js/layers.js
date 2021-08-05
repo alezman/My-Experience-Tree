@@ -653,7 +653,7 @@ addLayer("i", {
             requirementDescription: "1 Ideas",
             effectDescription: "Keep Lesser Ideas Buyables on <b>THIS</b> reset.",
             done() {
-                return player.li.points.gte(10)
+                return player.i.points.gte(1)
             },
         }
     },
