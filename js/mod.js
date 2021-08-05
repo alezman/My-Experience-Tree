@@ -5,7 +5,7 @@ let modInfo = {
 	pointsName: "points",
 	modFiles: ["layers.js", "tree.js"],
 
-	discordName: "",
+	discordName: "alez's server",
 	discordLink: "",
 	initialStartPoints: new Decimal (5), // Used for hard resets and new players
 	offlineLimit: 72,  // In hours
@@ -44,11 +44,15 @@ let changelog = `<h1>Changelog:</h1><br>
 		- Changed a lot of Upgrade Descriptions, and nerfed the game overall. <h5>(Sorry, lore will soon be re-added in another tab.)</h5>
 		- Upgrades now use a more balanced formula, and therefore had to lower a lot of requirements.<br>
 		- <b>Finally</b> removed the Lesser Ideas' clickable (if you ever managed to see it), and added 2 buyables instead. Also, LI is now a proper row 2 layer.<br>
+		- Renamed "Prestige Points" to "Knowledge".<br>
 		<br><h3><b>v1.5.1</b></h3>
 		<h6>Smaller Fixes</h6>
-		- Soon to come...<br>`
+		- Changed some more descriptions from "Prestige Points" to "Knowledge".<br>
+		- Fixed an error in mobile about "unlockOrder", it should be working now.<br>
+		- Challenges still had the same high reqs; lowered them so they are now possible.<br>
+		- DM me if any errors so I can fix them.<br>`
 
-let winText = `Congratulations! You have reached the end and beaten this game, but for now...`
+let winText = `Well, you beat the game, you should be able to`
 
 // If you add new functions anywhere inside of a layer, and those functions have an effect when called, add them here.
 // (The ones here are examples, all official functions are already taken care of)

@@ -194,17 +194,17 @@ addLayer("e", {
     upgrades: {
         11: {
             title: "Lack of Knowledge",
-            description: "It's hard when you know nothing. 2x to Prestige Point gain.",
+            description: "It's hard when you know nothing. 2x to Knowledge gain.",
             cost: new Decimal (1),
         },
         12: {
             title: "Stress^3",
-            description: "You give up on your first game, and you decide to start again. You now keep Prestige Upgrades on reset.",
+            description: "You give up on your first game, and you decide to start again. You now keep Knowledge Upgrades on reset.",
             cost: new Decimal (2),
         },
         13: {
             title: "A Theme",
-            description: "You got an idea for a new theme. You generate more Prestige Points based on Points.",
+            description: "You got an idea for a new theme. You generate more Knowledge based on Points.",
             cost: new Decimal (3),
             effect() {
                 return player.points.add(1).log(5).add(1)
@@ -213,12 +213,12 @@ addLayer("e", {
         },
         14: {
             title: "Ask for Help at Discord",
-            description: "Unlocks a new row of Prestige Upgrades.",
+            description: "Unlocks a new row of Knowledge Upgrades.",
             cost: new Decimal (5)
         },
         21: {
             title: "Impossible Goals",
-            description: "You feel like you're not doing progressing at your own mod. Prestige Points boost themselves.",
+            description: "You feel like you're not doing progressing at your own mod. Knowledge boosts itself.",
             cost: new Decimal (5e11),
             effect() {
                 return player.p.points.add(1).pow(0.25)
@@ -268,7 +268,7 @@ addLayer("e", {
         },
         15: {
             title: "Better Results",
-            description: "You feel better as you relax and take it easy. Prestige Point and Point gain are raised to the 1.4th power.",
+            description: "You feel better as you relax and take it easy. Knowledge and Point gain are raised to the 1.4th power.",
             cost: new Decimal (1e50),
             unlocked() {
                 if (hasUpgrade('e', 24)) return true
@@ -310,7 +310,7 @@ addLayer("t", {
     resource: "thoughts",            // The name of this layer's main prestige resource.
     row: 2,                                 // The row this layer is on (0 is the first row).
     position: 1,
-    baseResource: "prestige points",                 // The name of the resource your prestige gain is based on.
+    baseResource: "knowledge",                 // The name of the resource your prestige gain is based on.
     baseAmount() { return player.p.points },  // A function to return the current amount of baseResource.
 
     requires: new Decimal(100000),              // The amount of the base needed to  gain 1 of the prestige currency.
@@ -368,10 +368,10 @@ addLayer("t", {
     challenges: {
         11: {
             name: "'You won't make it!'",
-            challengeDescription: "The first row of Prestige Upgrades is disabled and the Prestige 2;3 upgrade (Inflation Problems) is nerfed.",
-            goalDescription: "500,000 Prestige Points.",
+            challengeDescription: "The first row of Knowledge Upgrades is disabled and the Prestige 2;3 upgrade (Inflation Problems) is nerfed.",
+            goalDescription: "320,000 Knowledge.",
             rewardDescription: "Unlock a new row of Experience Upgrades.",
-            canComplete: function() {return player.p.points.gte(500000)},
+            canComplete: function() {return player.p.points.gte(320000)},
             unlocked() {
                 if (hasMilestone('t', 1)) return true
                 else 
@@ -380,10 +380,10 @@ addLayer("t", {
         },
         12: {
             name: "'Just give up!'",
-            challengeDescription: "Prestige Points are much harder to earn.",
-            goalDescription: "1e15 Prestige Points.",
+            challengeDescription: "Knowledge is much harder to earn.",
+            goalDescription: "75,000 Knowledge.",
             rewardDescription: "The Prestige 2;3 Upgrade is more powerful.",
-            canComplete: function() {return player.p.points.gte(1e15)},
+            canComplete: function() {return player.p.points.gte(75000)},
             unlocked() {
                 if (hasChallenge('t', 11)) return true
                 else
@@ -392,10 +392,10 @@ addLayer("t", {
         },
         21: {
             name: "'It's impossible!'",
-            challengeDescription: "You don't passively generate Prestige Points, you must reset again.",
-            goalDescription: "100,000 experience.",
+            challengeDescription: "You don't passively generate Knowledge, you must reset again.",
+            goalDescription: "10,000 experience.",
             rewardDescription: "Unlock a new layer.",
-            canComplete: function() { return player.e.points.gte(100000)},
+            canComplete: function() { return player.e.points.gte(10000)},
             unlocked() {
                 if (hasChallenge('t', 12)) return true
                 else
@@ -416,7 +416,7 @@ addLayer("t", {
                 "prestige-button",
                 ["display-text",
                     function() {
-                        return "You have " +format(player.p.points)+ " prestige points."
+                        return "You have " +format(player.p.points)+ " knowledge."
                     }],
                 "blank",
                 "milestones"
@@ -440,14 +440,14 @@ addLayer("t", {
         return player.t.points.add(1).pow(0.55)
     },
     effectDescription() {
-        return "granting a " +format(layers.t.effect())+ "x bonus to point and prestige point production."
+        return "granting a " +format(layers.t.effect())+ "x bonus to point and knowledge production."
     } 
 })
 addLayer("li", {
     startData() { return {                  // startData is a function that returns default data for a layer. 
         unlocked: false,                     // You can add more variables here to add them to your layer.
         points: new Decimal(0),             // "points" is the internal name for the main resource of the layer.
-        unlockOrder: 0
+
     }},
     symbol: "LI",
     color: "#9F693D",                       // The color for this layer, which affects many elements.
@@ -458,8 +458,6 @@ addLayer("li", {
     baseAmount() { return player.points },  // A function to return the current amount of baseResource.
 
     requires() {
-        if (player.li.unlockOrder === 1) return new Decimal("10000000000")
-        else
         return new Decimal("100")
     },              // The amount of the base needed to  gain 1 of the prestige currency.
                                             // Also the amount required to unlock the layer.
@@ -473,7 +471,6 @@ addLayer("li", {
     gainExp() {                             // Returns the exponent to your gain of the prestige resource.
         return new Decimal(0.75)
     },
-    increaseUnlockOrder:['e'],
     layerShown() { return true },          // Returns a bool for if this layer's node should be visible in the tree.
     branches: ['p'],
     upgrades: {
@@ -528,7 +525,7 @@ addLayer("li", {
     milestones: {
         0: {
             requirementDescription: "10 Lesser Ideas",
-            effectDescription: "Keep Prestige Upgrades on <b>THIS</b> reset.",
+            effectDescription: "Keep Knowledge Upgrades on <b>THIS</b> reset.",
             done() {
                 return player.li.points.gte(10)
             },
