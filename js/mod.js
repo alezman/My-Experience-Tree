@@ -13,8 +13,8 @@ let modInfo = {
 
 // Set your version in num and name
 let VERSION = {
-	num: "1.5.1",
-	name: "Smaller Fixes",
+	num: "1.6",
+	name: "The Upgrade Tree",
 }
 
 let changelog = `<h1>Changelog:</h1><br>
@@ -50,7 +50,12 @@ let changelog = `<h1>Changelog:</h1><br>
 		- Changed some more descriptions from "Prestige Points" to "Knowledge".<br>
 		- Fixed an error in mobile about "unlockOrder", it should be working now.<br>
 		- Challenges still had the same high reqs; lowered them so they are now possible.<br>
-		- DM me if any errors so I can fix them.<br>`
+		- DM me if any errors so I can fix them.<br>
+		- Hid 2 layers since they were uncomplete.<br>
+		<br><h3><b>1.6</b></h3><br>
+		<h6>Upgrade Tree</h6>
+		- Re-added a layer previously hidden and finished it.<br>
+		- Removed nothingnesses as someone asked me to do so :sob:<br>`
 
 let winText = `Well, you beat the game, you should be able to`
 

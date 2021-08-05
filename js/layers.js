@@ -18,7 +18,7 @@ addLayer("p", {
     gainMult() { // Calculate the multiplier for main currency from bonuses
         mult = new Decimal(1)
         if (getBuyableAmount('li',12).gte(1)) mult = mult.times(buyableEffect('li',12))
-        if (inChallenge('t', 12)) mult = new Decimal(0.0001)
+        if (inChallenge('t', 12)) mult = mult.pow(0.33)
         if (hasUpgrade('e', 11)) mult = mult.times(2)
         if (hasUpgrade('e', 12)) mult = mult.times(3)
         if (hasUpgrade('e', 13)) mult = mult.times(upgradeEffect('e', 13))
@@ -180,8 +180,8 @@ addLayer("e", {
 
     gainMult() {                            // Returns your multiplier to your gain of the prestige resource.
         mult = new Decimal(1)
+        if (hasUpgrade('i',22)) mult = mult.times(upgradeEffect('i',22))
         if (hasUpgrade('p', 21)) mult = mult.times(1.95)
-        if (hasUpgrade('h', 14)) mult = mult.pow(1.32)
         return mult                         // Factor in any bonuses multiplying gain here.
     },
     gainExp() {                             // Returns the exponent to your gain of the prestige resource.
@@ -296,9 +296,6 @@ addLayer("e", {
         layerDataReset('e', keep) 
         }    
     },
-    passiveGeneration() {
-        return hasUpgrade('h', 13) ? 1 : 0
-    },
 })
 addLayer("t", {
     startData() { return {                  // startData is a function that returns default data for a layer. 
@@ -310,10 +307,10 @@ addLayer("t", {
     resource: "thoughts",            // The name of this layer's main prestige resource.
     row: 2,                                 // The row this layer is on (0 is the first row).
     position: 1,
-    baseResource: "knowledge",                 // The name of the resource your prestige gain is based on.
-    baseAmount() { return player.p.points },  // A function to return the current amount of baseResource.
+    baseResource: "experience",                 // The name of the resource your prestige gain is based on.
+    baseAmount() { return player.e.points },  // A function to return the current amount of baseResource.
 
-    requires: new Decimal(100000),              // The amount of the base needed to  gain 1 of the prestige currency.
+    requires: new Decimal(1000),              // The amount of the base needed to  gain 1 of the prestige currency.
                                             // Also the amount required to unlock the layer.
 
     type: "static",                         // Determines the formula used for calculating prestige currency.
@@ -324,7 +321,7 @@ addLayer("t", {
     gainExp() {                             // Returns the exponent to your gain of the prestige resource.
         return new Decimal(0.35)
     },
-
+    exponent: 0.6,
     layerShown() {
         if (player.t.points.gte(1)) return true
         if (hasUpgrade('e',14)) return true
@@ -355,10 +352,10 @@ addLayer("t", {
             },
         },
         3: {
-            requirementDescription: "200 thoughts",
+            requirementDescription: "30 thoughts",
             effectDescription: "Unlock the last 2 Experience upgrades.",
             done() {
-                return player.t.points.gte(200)
+                return player.t.points.gte(30)
             },
         },
     },
@@ -380,10 +377,10 @@ addLayer("t", {
         },
         12: {
             name: "'Just give up!'",
-            challengeDescription: "Knowledge is much harder to earn.",
-            goalDescription: "75,000 Knowledge.",
+            challengeDescription: "Knowledge gain is ^0.33.",
+            goalDescription: "7,500 Knowledge.",
             rewardDescription: "The Prestige 2;3 Upgrade is more powerful.",
-            canComplete: function() {return player.p.points.gte(75000)},
+            canComplete: function() {return player.p.points.gte(7500)},
             unlocked() {
                 if (hasChallenge('t', 11)) return true
                 else
@@ -404,9 +401,13 @@ addLayer("t", {
         },
         22: {
             name: "'TMT doesn't teach you coding, like ???'",
-            challengeDescription: "Point gain is ^0.33.",
-            goalDescription: "??? Points",
-            rewardDescription: "Does nothing at the moment, you could skip this for a while."
+            challengeDescription: "Point gain is ^0.33. (has no effect yet)",
+            goalDescription: "Infinity Points",
+            rewardDescription: "Does nothing at the moment, you could skip this for a while.",
+            canComplete: function() { return player.e.points.gte("1e100000000") },
+            unlocked() {
+                if (hasChallenge('t',21)) return true
+            }
         }
     },
     tabFormat: {
@@ -435,9 +436,9 @@ addLayer("t", {
         },
     },
     effect() {
-        if (player.t.points > 10000) return player.t.points.add(1).pow(0.45)
+        if (player.t.points.gte(10000)) return player.t.points.add(1).pow(0.45)
         else
-        return player.t.points.add(1).pow(0.55)
+        return player.t.points.add(1).log(3).add(1)
     },
     effectDescription() {
         return "granting a " +format(layers.t.effect())+ "x bonus to point and knowledge production."
@@ -466,6 +467,7 @@ addLayer("li", {
     exponent: 0.55,                          // "normal" prestige gain is (currency^exponent).
 
     gainMult() {                            // Returns your multiplier to your gain of the prestige resource.
+        if (hasUpgrade('i',21)) return mult = mult.times(upgradeEffect('i',21))
         return new Decimal(1)               // Factor in any bonuses multiplying gain here.
     },
     gainExp() {                             // Returns the exponent to your gain of the prestige resource.
@@ -514,11 +516,11 @@ addLayer("li", {
     tabFormat: {
         "Main Tab": {
             content: [
-                "main-display","blank","prestige-button","blank",["display-text", "You have 14.95 senses of accomplishment, which are granting a F1.79e308x bonus to nothingnesses."],"blank","blank","buyables"]
+                "main-display","blank","prestige-button","blank","blank","blank","buyables"]
         },
         "Milestones": {
             content: [
-                "main-display","blank",["display-text", function() { return "There is no reset button here. In fact, you should go back to the tab before this one if you want to reset, or just use the hotkey, but I honestly recommend you go to the first page, or, yeah I don't know you so I'm just gonna let you do whatever." },"blank","milestones"]
+                "main-display","blank",["display-text", function() { return "There is no reset button here. In fact, you should go back to the tab before this one if you want to reset, or just use the hotkey, but I honestly recommend you go to the first page, or, yeah I don't know you so I'm just gonna let you do whatever."}] ,"blank","milestones"
             ]
         }
     },
@@ -530,7 +532,15 @@ addLayer("li", {
                 return player.li.points.gte(10)
             },
         }
-    }
+    },
+    doReset(resettingLayer) {
+        if (temp[resettingLayer].row > temp.li.row) {
+            // the three lines here
+            let keep = []
+        if (hasMilestone('i', 0) && resettingLayer == "i") keep.push("buyables")
+        layerDataReset('p', keep) 
+        }    
+    },
 }),
 addLayer("i", {
     startData() { return {                  // startData is a function that returns default data for a layer. 
@@ -542,13 +552,13 @@ addLayer("i", {
     resource: "ideas",            // The name of this layer's main prestige resource.
     row: 2,                                 // The row this layer is on (0 is the first row).
     position: 0,
-    baseResource: "points",                 // The name of the resource your prestige gain is based on.
-    baseAmount() { return player.points },  // A function to return the current amount of baseResource.
+    baseResource: "lesser ideas",                 // The name of the resource your prestige gain is based on.
+    baseAmount() { return player.li.points },  // A function to return the current amount of baseResource.
 
-    requires: new Decimal("1ee5000000000"),              // The amount of the base needed to  gain 1 of the prestige currency.
+    requires: new Decimal(1000),              // The amount of the base needed to  gain 1 of the prestige currency.
                                             // Also the amount required to unlock the layer.
 
-    type: "normal",                         // Determines the formula used for calculating prestige currency.
+    type: "static",                         // Determines the formula used for calculating prestige currency.
     exponent: 0.6,                          // "normal" prestige gain is (currency^exponent).
 
     gainMult() {                            // Returns your multiplier to your gain of the prestige resource.
@@ -558,7 +568,11 @@ addLayer("i", {
         return new Decimal(0.85)
     },
 
-    layerShown() { return false },          // Returns a bool for if this layer's node should be visible in the tree.
+    layerShown() {
+        if (player.i.points.gte(1)) return true
+        if (getBuyableAmount('li',11).gte(3)) return true 
+        else 
+        return false },          // Returns a bool for if this layer's node should be visible in the tree.
     branches:['li'],
     upgrades: {
         11: {
@@ -570,49 +584,93 @@ addLayer("i", {
             title: "Creativity^2",
             description: "Lesser Ideas are boosted by Ideas.",
             cost() {
-                if (hasUpgrade('i',22)) return new Decimal("100000000")
+                if (hasUpgrade('i',22)) return new Decimal("20")
                 else
-                return new Decimal(10)
+                return new Decimal(5)
+            },
+            effect() {
+                return player.i.points.add(1).log(5).add(1)
+            },
+            effectDisplay() {
+                return format(upgradeEffect('i',21))+"x"
             }
         },
         22: {
             title: "Learn from Mistakes",
             description: "Experience is boosted by Thoughts.",
             cost() {
-                if (hasUpgrade('i',21)) return new Decimal("100000000")
+                if (hasUpgrade('i',21)) return new Decimal("20")
                 else
-                return new Decimal(10)
+                return new Decimal(5)
+            },
+            effect() {
+                return player.i.points.add(1).log(5).add(1)
+            },
+            effectDisplay() {
+                return format(upgradeEffect('i',22))+"x"
             }
         },
         31: {
             title: "Proper Ideas",
             description: "Lesser Ideas gain is boosted by 4x.",
             cost() {
-                if (hasUpgrade('i',33)) return new Decimal("1e50")
+                if (hasUpgrade('i',33)) return new Decimal("50")
                 else
-                return new Decimal(500)
-            }
+                return new Decimal(30)
+            },
+            effect() {
+                return new Decimal(4)
+            },
         },
         32: {
             title: "Smart I",
             description: "Knowledge is boosted by itself",
             cost() {
-                return new Decimal(500)
+                return new Decimal(30)
+            },
+            effect() {
+                return player.p.points.add(1).log(5).add(1)
+            },
+            effectDisplay() {
+                return format(upgradeEffect('i',32))+"x"
             }
         },
         33: {
             title: "JS Lessons",
+            description: "Experience gain is boosted by 3x.",
+            cost() {
+                if (hasUpgrade('i',31)) return new Decimal("50")
+                else
+                return new Decimal(30)
+            },
+            effect() {
+                return new Decimal(3)
+            }
         }
-    }       
+    },   
+    milestones: {
+        0: {
+            requirementDescription: "1 Ideas",
+            effectDescription: "Keep Lesser Ideas Buyables on <b>THIS</b> reset.",
+            done() {
+                return player.li.points.gte(10)
+            },
+        }
+    },
+    tabFormat: {
+        "Main Tab": {
+            content: ["main-display","blank",["display-text", "You have seen normal trees, tab trees or even single layer trees, but have you seen a proper upgrade tree which scales cost??"],"upgrades"]
+        }
+    }    
 })
-addLayer("h", {
+addLayer("te", {
     startData() { return {                  // startData is a function that returns default data for a layer. 
         unlocked: true,                     // You can add more variables here to add them to your layer.
         points: new Decimal(0),             // "points" is the internal name for the main resource of the layer.
     }},
 
     color: "#FA0202",                       // The color for this layer, which affects many elements.
-    resource: "a",            // The name of this layer's main prestige resource.
+    resource: "testers",            // The name of this layer's main prestige resource.
     row: 3,                                 // The row this layer is on (0 is the first row).
 
     baseResource: "experience",                 // The name of the resource your prestige gain is based on.
@@ -631,7 +689,7 @@ addLayer("h", {
         return new Decimal(1)
     },
     layerShown() { 
-        if (player.h.points.gte(1)) return true
+        if (player.te.points.gte(1)) return true
         if (hasUpgrade('e', 25)) return true
         else return false
     },          // Returns a bool for if this layer's node should be visible in the tree.
