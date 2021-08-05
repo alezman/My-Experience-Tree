@@ -659,7 +659,7 @@ addLayer("i", {
     },
     tabFormat: {
         "Main Tab": {
-            content: ["main-display","blank",["display-text", "You have seen normal trees, tab trees or even single layer trees, but have you seen a proper upgrade tree which scales cost??"],"upgrades"]
+            content: ["main-display","blank","blank","prestige-button","blank",["display-text", "You have seen normal trees, tab trees or even single layer trees, but have you seen a proper upgrade tree which scales cost??"],"upgrades"]
         }
     }    
 })
