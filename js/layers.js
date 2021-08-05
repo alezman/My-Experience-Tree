@@ -120,10 +120,10 @@ addLayer("p", {
             description: "An upgrade can be responsible for game break. Experience boosts points.",
             cost: new Decimal(730),
             effect() {
-                if (hasChallenge('t',12) && hasUpgrade('e',23)) return player.e.points.add(1).log(2).add(1)
-                if (hasChallenge('t', 12)) return player.e.points.add(1).log(4).add(1)
+                if (hasChallenge('t',12) && hasUpgrade('e',23)) return player.e.points.add(1).log(1.68).add(1)
+                if (hasChallenge('t', 12)) return player.e.points.add(1).log(3).add(1)
                 if (inChallenge('t', 11)) return player.e.points.add(1).log(15).add(1)
-                if (hasUpgrade('e', 23)) return player.e.points.add(1).log(4).add(1)
+                if (hasUpgrade('e', 23)) return player.e.points.add(1).log(3).add(1)
                 else
                 return player.e.points.add(1).log(6).add(1)
             },
@@ -328,7 +328,7 @@ addLayer("t", {
         else 
         return false 
     },          // Returns a bool for if this layer's node should be visible in the tree.
-    branches: ['e', 'li'],
+    branches: ['e'],
     milestones: {
         0: {
             requirementDescription: "2 thoughts",
@@ -346,7 +346,7 @@ addLayer("t", {
         },
         2: {
             requirementDescription: "4 thoughts",
-            effectDescription: "Keep Lesser Ideas' Buyables.",
+            effectDescription: "Keep Lesser Ideas' buyables on <b>ALL</b> resets.",
             done() {
                 return player.t.points.gte(4)
             },
@@ -401,8 +401,8 @@ addLayer("t", {
         },
         22: {
             name: "'TMT doesn't teach you coding, like ???'",
-            challengeDescription: "Point gain is ^0.33. (has no effect yet)",
-            goalDescription: "Infinity Points",
+            challengeDescription: "<b>Note: This challenge is uncomplete and has no effect on anything.</b><br>Point gain is ^0.33. (has no effect yet)",
+            goalDescription: "Infinity Points (doesnt work)",
             rewardDescription: "Does nothing at the moment, you could skip this for a while.",
             canComplete: function() { return player.e.points.gte("1e100000000") },
             unlocked() {
@@ -442,6 +442,11 @@ addLayer("t", {
     },
     effectDescription() {
         return "granting a " +format(layers.t.effect())+ "x bonus to point and knowledge production."
+    },
+    canBuyMax() {
+        if (hasMilestone('i',1)) return true
+        else
+        return false
     } 
 })
 addLayer("li", {
@@ -505,7 +510,7 @@ addLayer("li", {
             display() { return "Multiply Knowledge gain by Points, however cost increases by 100.<br>Cost: "+format(new Decimal(100).pow(getBuyableAmount(this.layer,this.id)))+" Lesser Ideas<br>Currently: " + format(buyableEffect('li',12)) + "x<br>" },
             canAfford() { return player[this.layer].points.gte(this.cost()) },
             buy() {
-                player[this.layer].points = player[this.layer].points.sub(new Decimal(10).pow(getBuyableAmount(this.layer,this.id)))
+                player[this.layer].points = player[this.layer].points.sub(new Decimal(100).pow(getBuyableAmount(this.layer,this.id)))
                 setBuyableAmount(this.layer, this.id, getBuyableAmount(this.layer, this.id).add(1))
             },
             effect() {
@@ -537,8 +542,8 @@ addLayer("li", {
         if (temp[resettingLayer].row > temp.li.row) {
             // the three lines here
             let keep = []
-        if (hasMilestone('i', 0) && resettingLayer == "i") keep.push("buyables")
-        layerDataReset('p', keep) 
+        if (hasMilestone('t', 2)) keep.push("buyables")
+        layerDataReset('li', keep) 
         }    
     },
 }),
@@ -655,24 +660,39 @@ addLayer("i", {
             done() {
                 return player.i.points.gte(1)
             },
+        },
+        1: {
+            requirementDescription: "5 Ideas",
+            effectDescription: "Can buy max Ideas and Thoughts. Yeah, both layers support each other.",
+            done() {
+                return player.i.points.gte(5)
+            }
         }
     },
     tabFormat: {
         "Main Tab": {
             content: ["main-display","blank","blank","prestige-button","blank",["display-text", "You have seen normal trees, tab trees or even single layer trees, but have you seen a proper upgrade tree which scales cost??"],"upgrades"]
+        },
+        "Milestones": {
+            content: ["main-display","blank","blank","milestones",["display-text", "Again, there is no reset button here. Just Milestones, and that's all."]]
         }
+    },
+    canBuyMax() {
+        if (hasMilestone('i',1)) return true
+        else
+        return false
     }    
 })
-addLayer("te", {
+addLayer("sp", {
     startData() { return {                  // startData is a function that returns default data for a layer. 
         unlocked: true,                     // You can add more variables here to add them to your layer.
         points: new Decimal(0),             // "points" is the internal name for the main resource of the layer.
     }},
-
+    symbol: "P",
     color: "#FA0202",                       // The color for this layer, which affects many elements.
-    resource: "testers",            // The name of this layer's main prestige resource.
-    row: 3,                                 // The row this layer is on (0 is the first row).
-
+    resource: "prestige points",            // The name of this layer's main prestige resource.
+    row: 2,                                 // The row this layer is on (0 is the first row).
+    position: 2,
     baseResource: "experience",                 // The name of the resource your prestige gain is based on.
     baseAmount() { return player.e.points },  // A function to return the current amount of baseResource.
 
@@ -689,7 +709,7 @@ addLayer("te", {
         return new Decimal(1)
     },
     layerShown() { 
-        if (player.te.points.gte(1)) return true
+        if (player.sp.points.gte(1)) return true
         if (hasUpgrade('e', 25)) return true
         else return false
     },          // Returns a bool for if this layer's node should be visible in the tree.

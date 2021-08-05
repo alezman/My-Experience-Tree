@@ -1,6 +1,6 @@
 let modInfo = {
 	name: "My Experience Tree",
-	id: "ilearntjscodesmh",
+	id: "fullreset",
 	author: "alez",
 	pointsName: "points",
 	modFiles: ["layers.js", "tree.js"],
@@ -13,8 +13,8 @@ let modInfo = {
 
 // Set your version in num and name
 let VERSION = {
-	num: "1.6",
-	name: "The Upgrade Tree",
+	num: "1.6.1",
+	name: "Improvements Pt.1",
 }
 
 let changelog = `<h1>Changelog:</h1><br>
@@ -55,7 +55,12 @@ let changelog = `<h1>Changelog:</h1><br>
 		<br><h3><b>1.6</b></h3><br>
 		<h6>Upgrade Tree</h6>
 		- Re-added a layer previously hidden and finished it.<br>
-		- Removed nothingnesses as someone asked me to do so :sob:<br>`
+		- Removed nothingnesses as someone asked me to do so :sob:<br>
+		- Thoughts no longer require Knowledge; instead they require Experience and Ideas require Lesser Ideas, however they help each other<br> 
+		<br><h3><b>1.6.1</b></h3><br>
+		<h6>Improvements Pt.1</h6>
+		- Fixed so many bugs, to the point where I can't count them.
+		- Added a milestone.`
 
 let winText = `Well, you beat the game, you should be able to`
 
