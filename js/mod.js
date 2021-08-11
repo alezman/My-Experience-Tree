@@ -63,13 +63,13 @@ let changelog = `<h1>Changelog:</h1><br>
 		- Added a milestone<br>.
 		<br><h2><b>v2.0</b></h2><br>
 		<h6>Rebuild Pt.1</h6>
-		- Rebalanced most upgrades
-		- ADDED ACHIEVEMENTS, and a currency.
-		- ADDED LORE!!! FINALLY!!
-		- ADDED GUIDES! Anyways, do you really need guides?
-		- ADDED A SUPER HARD CHALLENGE!
-		- Rebalanced the endgame, now it is proper.
-		- Brrr I thought v1.4 was going to be the end😂😂.`
+		- Rebalanced most upgrades<br>
+		- ADDED ACHIEVEMENTS, and a currency.<br>
+		- ADDED LORE!!! FINALLY!!<br>
+		- ADDED GUIDES! Anyways, do you really need guides?<br>
+		- ADDED A SUPER HARD CHALLENGE!<br>
+		- Rebalanced the endgame, now it is proper.<br>
+		- Brrr I thought v1.4 was going to be the end😂😂.<br><br>`
 
 let winText = `Well, you beat the current endgame, soon there will be more updates.`
 
