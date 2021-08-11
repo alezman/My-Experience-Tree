@@ -6,7 +6,7 @@ let modInfo = {
 	modFiles: ["layers.js", "tree.js"],
 
 	discordName: "alez's server",
-	discordLink: "",
+	discordLink: "https://discord.gg/bgMT9gmygZ",
 	initialStartPoints: new Decimal (5), // Used for hard resets and new players
 	offlineLimit: 24,  // In hours
 }
