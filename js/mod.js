@@ -1,6 +1,6 @@
 let modInfo = {
-	name: "My Experience Tree",
-	id: "fullreset",
+	name: "My Experience Tree Rebuilt",
+	id: "fullreset2",
 	author: "alez",
 	pointsName: "points",
 	modFiles: ["layers.js", "tree.js"],
@@ -8,13 +8,13 @@ let modInfo = {
 	discordName: "alez's server",
 	discordLink: "",
 	initialStartPoints: new Decimal (5), // Used for hard resets and new players
-	offlineLimit: 72,  // In hours
+	offlineLimit: 24,  // In hours
 }
 
 // Set your version in num and name
 let VERSION = {
-	num: "1.6.1",
-	name: "Improvements Pt.1",
+	num: "2.0",
+	name: "Rebuild Pt.1",
 }
 
 let changelog = `<h1>Changelog:</h1><br>
@@ -58,11 +58,20 @@ let changelog = `<h1>Changelog:</h1><br>
 		- Removed nothingnesses as someone asked me to do so :sob:<br>
 		- Thoughts no longer require Knowledge; instead they require Experience and Ideas require Lesser Ideas, however they help each other<br> 
 		<br><h3><b>1.6.1</b></h3><br>
-		<h6>Improvements Pt.1</h6>
-		- Fixed so many bugs, to the point where I can't count them.
-		- Added a milestone.`
+		<h6>Improvements</h6>
+		- Fixed so many bugs, to the point where I can't count them.<br>
+		- Added a milestone<br>.
+		<br><h2><b>v2.0</b></h2><br>
+		<h6>Rebuild Pt.1</h6>
+		- Rebalanced most upgrades
+		- ADDED ACHIEVEMENTS, and a currency.
+		- ADDED LORE!!! FINALLY!!
+		- ADDED GUIDES! Anyways, do you really need guides?
+		- ADDED A SUPER HARD CHALLENGE!
+		- Rebalanced the endgame, now it is proper.
+		- Brrr I thought v1.4 was going to be the end😂😂.`
 
-let winText = `Well, you beat the game, you should be able to`
+let winText = `Well, you beat the current endgame, soon there will be more updates.`
 
 // If you add new functions anywhere inside of a layer, and those functions have an effect when called, add them here.
 // (The ones here are examples, all official functions are already taken care of)
@@ -83,6 +92,7 @@ function getPointGen() {
 		return new Decimal(0)
     if (!hasUpgrade('p',11)) return new Decimal(0)
 	let gain = new Decimal(1)
+	if (inChallenge('t',22)) gain = gain.pow(0.01)
 	if (hasUpgrade('p', 12)) gain = gain.times(upgradeEffect('p', 12))
 	if (hasUpgrade('p', 13)) gain = gain.times(upgradeEffect('p', 13))
 	if (hasUpgrade('p',14)) gain = gain.times(upgradeEffect('p',14))
@@ -92,8 +102,12 @@ function getPointGen() {
 	if (hasChallenge('t', 11)) gain = gain.times(3)
 	if (hasUpgrade('e', 24)) gain = gain.times(upgradeEffect('e', 24))
 	gain = gain.times(layers.t.effect())
+	gain = gain.times(layers.a.effect())
 	if (hasUpgrade('e', 15)) gain = gain.pow(1.5)
 	if (getBuyableAmount('li',11).gte(1)) gain = gain.times(buyableEffect('li',11))
+	if (getBuyableAmount('li',21).gte(1)) gain = gain.times(buyableEffect('li',21))
+	if (hasAchievement('a',33)) gain = gain.times(20)
+	if (hasAchievement('a',35)) gain = gain.pow(1.2)
 	return gain
 }
 
@@ -103,12 +117,12 @@ function addedPlayerData() { return {
 
 // Display extra things at the top of the page
 var displayThings = [
-	"Reach 1.79e308 points to finish the game."
+	"Current Endgame: 1e30 Points..."
 ]
 
 // Determines when the game "ends"
 function isEndgame() {
-	return player.points.gte(new Decimal(2).pow(1024))
+	return player.points.gte("1e30")
 }
 
 
