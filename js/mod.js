@@ -1,6 +1,6 @@
 let modInfo = {
 	name: "My Experience Tree Rebuilt",
-	id: "fullreset2",
+	id: "fullreset",
 	author: "alez",
 	pointsName: "points",
 	modFiles: ["layers.js", "tree.js"],
@@ -13,8 +13,8 @@ let modInfo = {
 
 // Set your version in num and name
 let VERSION = {
-	num: "2.0",
-	name: "Rebuild Pt.1",
+	num: "2.1",
+	name: "Rebuild Pt.2 & Creative.",
 }
 
 let changelog = `<h1>Changelog:</h1><br>
@@ -69,7 +69,14 @@ let changelog = `<h1>Changelog:</h1><br>
 		- ADDED GUIDES! Anyways, do you really need guides?<br>
 		- ADDED A SUPER HARD CHALLENGE!<br>
 		- Rebalanced the endgame, now it is proper.<br>
-		- Brrr I thought v1.4 was going to be the end😂😂.<br><br>`
+		- Brrr I thought v1.4 was going to be the end😂😂.<br>
+		<br><h3><b>v2.1</b></h3><br>
+		<h6>Rebuild Pt.2</h6>
+		- Made a new layer more interesting.<br>
+		- MORE ACHIEVEMENTS.<br>
+		- Lore for new layer soon coming.<br>
+		- Guide for new layer made :>.<br>
+		- Fixed small bugs.`
 
 let winText = `Well, you beat the current endgame, soon there will be more updates.`
 
@@ -108,6 +115,15 @@ function getPointGen() {
 	if (getBuyableAmount('li',21).gte(1)) gain = gain.times(buyableEffect('li',21))
 	if (hasAchievement('a',33)) gain = gain.times(20)
 	if (hasAchievement('a',35)) gain = gain.pow(1.2)
+	if (hasAchievement('a',44)) gain = gain.pow(1.1)
+	if (hasUpgrade('c',11)) gain = gain.pow(upgradeEffect('c',11))
+	if (hasUpgrade('c',12)) gain = gain.times(upgradeEffect('c',11))
+	if (hasMilestone('c',4)) gain = gain.pow(1.1)
+	if (hasAchievement('a',53)) gain = gain.times(1000)
+	if (hasAchievement('a',54)) gain = gain.times(1000)
+	if (hasAchievement('a',56)) gain = gain.pow(1.01)
+	if (hasAchievement('a',57)) gain = gain.pow(1.01)
+	gain = gain.times(layers.c.effect())
 	return gain
 }
 
@@ -117,12 +133,12 @@ function addedPlayerData() { return {
 
 // Display extra things at the top of the page
 var displayThings = [
-	"Current Endgame: 1e30 Points..."
+	"Current Endgame: 1e155 Points..."
 ]
 
 // Determines when the game "ends"
 function isEndgame() {
-	return player.points.gte("1e30")
+	return player.points.gte("1e155")
 }
 
 

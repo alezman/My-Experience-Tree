@@ -5,6 +5,8 @@ addLayer("p", {
     startData() { return {
         unlocked: true,
 		points: new Decimal(0),
+        best: new Decimal(0),
+        total: new Decimal(0),
         effect1: new Decimal(2),
         cost1: new Decimal(10),
     }},
@@ -17,6 +19,7 @@ addLayer("p", {
     exponent: 0.5, // Prestige currency exponent
     gainMult() { // Calculate the multiplier for main currency from bonuses
         mult = new Decimal(1)
+        if (hasAchievement('a',41)) mult = mult.times(layers.a.effect())
         if (inChallenge('t',22)) mult = mult.pow(0.01)
         if (hasUpgrade('p',32)) mult = mult.times(upgradeEffect('p',32))
         if (getBuyableAmount('li',12).gte(1)) mult = mult.times(buyableEffect('li',12))
@@ -26,6 +29,7 @@ addLayer("p", {
         if (hasUpgrade('e', 13)) mult = mult.times(upgradeEffect('e', 13))
         mult = mult.times(temp.t.effect)
         if (hasUpgrade('e', 15)) mult = mult.pow(1.5)
+        if (hasAchievement('a',53)) mult = mult.times(100)
         return mult
     },
     gainExp() { // Calculate the exponent on main currency from bonuses
@@ -202,6 +206,7 @@ addLayer("p", {
         if (hasUpgrade('e', 12) && resettingLayer == "e") keep.push("upgrades")
         if (hasMilestone('li', 0) && resettingLayer == "li") keep.push("upgrades")
         if (hasMilestone('i',2)) keep.push("upgrades")
+        if (hasMilestone('c',1)) keep.push("milestones")
         layerDataReset('p', keep) 
         }    
     },
@@ -227,9 +232,9 @@ addLayer("p", {
             }
         },
         2: {
-            requirementDescription: "1,000,000,000,000,000 Knowledge",
-            effectDescription: "Unlocks a secret layer.",
-            done() { return player.p.points.gte(1e15)}
+            requirementDescription: "1e40 Knowledge",
+            effectDescription: "Unlocks a new layer.",
+            done() { return player.p.points.gte(1e40)}
         }
     },
     infoboxes: {
@@ -255,6 +260,7 @@ addLayer("p", {
             title: "Ideas: Guide",
             body() { return "In order to complete this layer, you must buy all the upgrades in the tree.<br><b>NOTE:</b>I personally recommend you go for 2 ideas before you buy the first upgrade.<b>" },
             unlocked() {
+                if (player.li.points.gte(1000)) return true
                 if (player.i.points.gte(1)) return true
                 else
                 return false
@@ -264,6 +270,7 @@ addLayer("p", {
             title: "Experience: Guide",
             body() { return "<b>NOTE</b>: This layer is meant to be done first before Lesser Ideas, but if you start with Lesser Ideas, there's absolutely no problem. You gotta buy the first upgrades, and by the point you unlock the new Knowledge Upgrades, you should have already gotten atleast 3 of the first buyable and 2 of the second one in Lesser Ideas. That way it'll be super easy to get the upgrades." },
             unlocked() {
+                if (player.points.gte(250)) return true
                 if (player.e.points.gte(1)) return true
                 else
                 return false
@@ -273,7 +280,18 @@ addLayer("p", {
             title: "Thoughts: Guide",
             body() { return "<b>Note</b>: If you want faster results, I recommend you go for 2 Ideas first, since you can buy max Thoughts and Ideas. You should go for 3 Thoughts and do the first challenge, after, do the second, and finally the third, after you get the third row of upgrades, you should buy them. Afterwards, you should do the Last Challenge. <b>Note, again: The CHALLENGE is not meant to last 5 minutes, it can be super hard if you aren't prepared.</b>" },
             unlocked() {
+                if (player.e.points.gte(1000)) return true
                 if (player.t.points.gte(1)) return true
+                else
+                return false
+            }
+        },
+        guidec: {
+            title: "Creativity: Guide",
+            body() { return "I recommend you try buying the most buyables from Lesser Ideas that you can, buy the last 3 experience upgrades, and you should have already finished the fourth Thought challenge. You should get 2 or more Creativity on reset as your first one so you can have the fastest. Buy the first upgrade and let your Creativity Ideas grow." },
+            unlocked() {
+                if (player.p.points.gte(1e30)) return true
+                if (player.c.points.gte(1)) return true
                 else
                 return false
             }
@@ -316,17 +334,12 @@ addLayer("p", {
         },
         "Milestones": {
             content: ["blank","blank",["display-text", () => "There should be milestones in here, if there aren't any, then, well, I can't do anything about it."],"milestones"],
-            unlocked() {
-                if (hasUpgrade('p',11)) return true
-                else
-                return false
-            }
         },
         "Lore": {
             content: ["blank",["display-text", "Lore goes here. EVERYTHING."],"blank",["infobox", "lore"],["infobox", "lore2"],["infobox", "lore3"],["infobox", "lore4"],]
         },
         "Help": {
-            content: ["blank",["display-text", "Stuck? Here's everything you'll need to understand."],"blank",["infobox","guidek"],["infobox","guidee"],["infobox","guideli"],["infobox","guidet"],["infobox","guidei"]]
+            content: ["blank",["display-text", "Stuck? Here's everything you'll need to understand."],"blank",["infobox","guidek"],["infobox","guidee"],["infobox","guideli"],["infobox","guidet"],["infobox","guidei"],["infobox","guidec"]]
         }
     }
 })
@@ -334,6 +347,8 @@ addLayer("e", {
     startData() { return {                  // startData is a function that returns default data for a layer. 
         unlocked: false,                     // You can add more variables here to add them to your layer.
         points: new Decimal(0),             // "points" is the internal name for the main resource of the layer.
+        best: new Decimal(0),
+        total: new Decimal(0),
     }},
 
     color: "#4BDC13",                       // The color for this layer, which affects many elements.
@@ -437,7 +452,7 @@ addLayer("e", {
             description: "Yet another bonus to point gain based on Thoughts.",
             cost: new Decimal (100000),
             effect() {
-                return player.t.points.add(1).log(3)
+                return player.t.points.add(1).log(3).add(1)
             },
             effectDisplay() {
                 return format(upgradeEffect('e', 24))+"x"
@@ -459,7 +474,7 @@ addLayer("e", {
         },
         25: {
             title: "Challenges Problem",
-            description: "You keep on failing trying to make a challenge. Does nothing at the moment.",
+            description: "Unlocks a new layer if you don't have 1e30 knowledge yet.",
             cost: new Decimal(1e11),
             unlocked() {
                 if (hasUpgrade('e', 15)) return true
@@ -483,11 +498,18 @@ addLayer("e", {
         if (hasChallenge('t',22)) return 1
         return hasChallenge('t', 22) ? 1 : 0
     },
+    tabFormat: {
+        "Experience": {
+            content:["main-display","blank","prestige-button","blank","resource-display","blank","upgrades"]
+        }
+    }
 })
 addLayer("t", {
     startData() { return {                  // startData is a function that returns default data for a layer. 
         unlocked: false,                    // You can add more variables here to add them to your layer.
         points: new Decimal(0),             // "points" is the internal name for the main resource of the layer.
+        best: new Decimal(0),
+        total: new Decimal(0),
     }},
 
     color: "#00FFD8",                       // The color for this layer, which affects many elements.
@@ -510,6 +532,7 @@ addLayer("t", {
     },
     exponent: 0.6,
     layerShown() {
+        if (hasUpgrade('e',14)) return true
         if (player.t.points.gte(1)) return true
         if (hasMilestone('p',1)) return true
         else 
@@ -635,12 +658,25 @@ addLayer("t", {
         if (hasMilestone('i',1)) return true
         else
         return false
-    } 
+    },
+    autoPrestige() { return hasMilestone('c', 3) },
+    resetsNothing() {return hasMilestone('c', 3)},
+    doReset(resettingLayer) {
+        if (temp[resettingLayer].row > temp.t.row) {
+            // the three lines here
+            let keep = []
+        if (hasMilestone('c',0) && resettingLayer == "c") keep.push("challenges")
+        if (hasMilestone('c',0)) keep.push("milestones")
+        layerDataReset('t', keep) 
+        }    
+    },  
 })
 addLayer("li", {
     startData() { return {                  // startData is a function that returns default data for a layer. 
         unlocked: false,                     // You can add more variables here to add them to your layer.
         points: new Decimal(0),             // "points" is the internal name for the main resource of the layer.
+        best: new Decimal(0),
+        total: new Decimal(0),
 
     }},
     symbol: "LI",
@@ -658,6 +694,9 @@ addLayer("li", {
 
     type: "normal",                         // Determines the formula used for calculating prestige currency.
     exponent: 0.55,                          // "normal" prestige gain is (currency^exponent).
+    hotkeys: [
+        {key: "l", description: "L: Reset for Lesser Ideas.", onPress(){if (canReset(this.layer)) doReset(this.layer)}},
+    ],
 
     gainMult() {                            // Returns your multiplier to your gain of the prestige resource.
         if (hasUpgrade('p',34)) mult = mult.times(3)
@@ -676,21 +715,13 @@ addLayer("li", {
         return false
     },          // Returns a bool for if this layer's node should be visible in the tree.
     branches: ['p'],
-    upgrades: {
-        11: {
-            title: "{deprecated}",
-            description: "{deprecated}",
-            cost: new Decimal(1e10),
-            onPurchase() {
-                
-            }
-        },
-    },
     buyables: {
         11: {
             title() { return "Learn some JS code." },
-            cost() { return new Decimal(10).pow(getBuyableAmount(this.layer,this.id)) },
-            display() { return "Multiply Point Gain by 2, however cost increases by 10.<br>Cost: "+format(new Decimal(10).pow(getBuyableAmount(this.layer,this.id)))+" Lesser Ideas<br>Currently: " + format(buyableEffect('li',11)) + "x<br>" },
+            cost() { 
+                return new Decimal(10).pow(getBuyableAmount(this.layer,this.id)) 
+            },
+            display() { return "Multiply Point Gain by 2, however cost increases by 10.<br>Cost: "+format(new Decimal(10).pow(getBuyableAmount(this.layer,this.id)))+" Lesser Ideas<br>Currently: " + format(buyableEffect('li',11)) + "x<br>Amount: " + formatWhole(getBuyableAmount('li',11))+ " (Maximum 20)" },
             canAfford() { return player[this.layer].points.gte(this.cost()) },
             buy() {
                 player[this.layer].points = player[this.layer].points.sub(new Decimal(10).pow(getBuyableAmount(this.layer,this.id)))
@@ -700,12 +731,15 @@ addLayer("li", {
                 if (inChallenge('t',22)) return new Decimal(1)
                 else
                 return new Decimal(2).pow(getBuyableAmount(this.layer,this.id))
+            },
+            purchaseLimit() {
+                return new Decimal(20)
             }
         },
         12: {
             title() { return "Fix a bug." },
             cost() { return new Decimal(100).pow(getBuyableAmount(this.layer,this.id)) },
-            display() { return "Multiply Knowledge gain by Points, however cost increases by 100.<br>Cost: "+format(new Decimal(100).pow(getBuyableAmount(this.layer,this.id)))+" Lesser Ideas<br>Currently: " + format(buyableEffect('li',12)) + "x<br>" },
+            display() { return "Multiply Knowledge gain by Points, however cost increases by 100.<br>Cost: "+format(new Decimal(100).pow(getBuyableAmount(this.layer,this.id)))+" Lesser Ideas<br>Currently: " + format(buyableEffect('li',12)) + "x<br>Amount: " + formatWhole(getBuyableAmount('li',12)) + " (Maximum 10)"},
             canAfford() { return player[this.layer].points.gte(this.cost()) },
             buy() {
                 player[this.layer].points = player[this.layer].points.sub(new Decimal(100).pow(getBuyableAmount(this.layer,this.id)))
@@ -715,12 +749,15 @@ addLayer("li", {
                 if (inChallenge('t',22)) return new Decimal(1)
                 else
                 return player.points.add(1).pow(getBuyableAmount(this.layer,this.id).pow(0.3).div(9))
+            },
+            purchaseLimit() {
+                return new Decimal(10)
             }
         },
         21: {
             title() { return "Make an upgrade." },
             cost() { return new Decimal(7000).pow(getBuyableAmount(this.layer,this.id)) },
-            display() { return "Multiply Points by Points, however cost increases by 7000.<br>Cost: "+format(new Decimal(7000).pow(getBuyableAmount(this.layer,this.id)))+" Lesser Ideas<br>Currently: " + format(buyableEffect('li',12)) + "x<br>" },
+            display() { return "Multiply Points by Points, however cost increases by 7000.<br>Cost: "+format(new Decimal(7000).pow(getBuyableAmount(this.layer,this.id)))+" Lesser Ideas<br>Currently: " + format(buyableEffect('li',12)) + "x<br>Amount: " + formatWhole(getBuyableAmount('li',21)) + " (Maximum 10)" },
             canAfford() { return player[this.layer].points.gte(this.cost()) },
             buy() {
                 player[this.layer].points = player[this.layer].points.sub(new Decimal(7000).pow(getBuyableAmount(this.layer,this.id)))
@@ -735,6 +772,9 @@ addLayer("li", {
                 if (hasMilestone('li',1)) return true
                 else
                 return false
+            },
+            purchaseLimit() {
+                return new Decimal(10)
             }
         },
     },
@@ -784,6 +824,8 @@ addLayer("i", {
     startData() { return {                  // startData is a function that returns default data for a layer. 
         unlocked: false,                     // You can add more variables here to add them to your layer.
         points: new Decimal(0),             // "points" is the internal name for the main resource of the layer.
+        best: new Decimal(0),
+        total: new Decimal(0),
     }},
 
     color: "#177062",                       // The color for this layer, which affects many elements.
@@ -807,6 +849,7 @@ addLayer("i", {
     },
 
     layerShown() {
+        if (getBuyableAmount('li',11).gte(3)) return true
         if (player.i.points.gte(1)) return true
         if (hasMilestone('p',1)) return true 
         else 
@@ -921,12 +964,25 @@ addLayer("i", {
         if (hasMilestone('i',1)) return true
         else
         return false
-    }    
+    },
+    autoPrestige() { return hasMilestone('c', 3) },
+    resetsNothing() {return hasMilestone('c', 3)},
+    doReset(resettingLayer) {
+        if (temp[resettingLayer].row > temp.i.row) {
+            // the three lines here
+            let keep = []
+        if (hasMilestone('c',0) && resettingLayer == "c") keep.push("milestones")
+        if (hasMilestone('c',2)) keep.push("upgrades")
+        layerDataReset('i', keep) 
+        }    
+    },     
 })
 addLayer("a", {
     startData() { return {                  // startData is a function that returns default data for a layer. 
         unlocked: true,                     // You can add more variables here to add them to your layer.
         points: new Decimal(0),             // "points" is the internal name for the main resource of the layer.
+        best: new Decimal(0),
+        total: new Decimal(0),
     }},
     symbol: "ACH",
     color: "#FA0202",                       // The color for this layer, which affects many elements.
@@ -936,7 +992,7 @@ addLayer("a", {
     baseResource: "experience",                 // The name of the resource your prestige gain is based on.
     baseAmount() { return player.e.points },  // A function to return the current amount of baseResource.
 
-    requires: new Decimal(1e60),              // The amount of the base needed to  gain 1 of the prestige currency.
+    requires: new Decimal("1e450000"),              // The amount of the base needed to  gain 1 of the prestige currency.
                                             // Also the amount required to unlock the layer.
 
     type: "normal",                         // Determines the formula used for calculating prestige currency.
@@ -957,12 +1013,12 @@ addLayer("a", {
             tooltip: "Get 250 Points",
             done() {return player.points.gte(250)},
             onComplete() {
-                addPoints('a',4)
+                addPoints('a',3)
             }
         },
         12: {
             name: "Skilled",
-            tooltip: "Get 1,000 Prestige Points",
+            tooltip: "Get 1,000 Knowledge",
             done() {return player.p.points.gte(1000)},
             onComplete() {
                 addPoints('a',3)
@@ -970,7 +1026,7 @@ addLayer("a", {
         },
         13: {
             name: "Professional",
-            tooltip: "Get 75,000 Prestige Points",
+            tooltip: "Get 75,000 Knowledge",
             done() {return player.p.points.gte(75000)},
             onComplete() {
                 addPoints('a',3)
@@ -1100,8 +1156,8 @@ addLayer("a", {
         },
         35: {
             name: "Pointless Knowledge",
-            tooltip: "???<br>Reward:^1.2 to Point gain.",
-            done() {return player.p.points.gte(1e7) && player.p.points.lte(1000)},
+            tooltip: "Have less than 1000 knowledge, but have over 10 million points.<br>Reward:^1.2 to Point gain.",
+            done() {return player.p.points.lte(1000) && player.points.gte(1e7)},
             onComplete() {
                 addPoints('a',3)
             }
@@ -1121,15 +1177,316 @@ addLayer("a", {
             onComplete() {
                 addPoints('a',3)
             }
+        },
+        41: {
+            name: "The Ultimate III",
+            tooltip: "Get 10,000,000 Lesser Ideas<br>Reward: Senses of Accomplishment now also grant a bonus to Knowledge.",
+            done() {return player.li.points.gte(10000000)},
+            onComplete() {
+                addPoints('a',3)
+            }
+        },
+        42: {
+            name: "Godlike",
+            tooltip: "Get 1,000,000 Experience",
+            done() {return player.e.points.gte(1000000)},
+            onComplete() {
+                addPoints('a',3)
+            }
+        },
+        43: {
+            name: "But I don't know how to do it!",
+            tooltip: "???<br>Reward:Senses of Accomplishment use a better formula.",
+            done() {return player.p.points.gte(1e90) && player.points.gte(1e120)},
+            onComplete() {
+                addPoints('a',3)
+            }
+        },
+        44: {
+            name: "More Ideas",
+            tooltip: "Go Creative.<br>Reward:Point gain is ^1.1 and 2x to experience gain.",
+            done() {return player.c.points.gte(1)},
+            onComplete() {
+                addPoints('a',3)
+            }
+        },
+        45: {
+            name: "Creativity^3",
+            tooltip: "Have 3 creativity.",
+            done() {return player.c.points.gte(3)},
+            onComplete() {
+                addPoints('a',3)
+            }
+        },
+        46: {
+            name: "Powerful Results",
+            tooltip: "Buy the first Creativity upgrade.<br>Reward: What? You wanted a reward? Even after this op upgrade?!",
+            done() {return hasUpgrade('c',11)},
+            onComplete() {
+                addPoints('a',3)
+            }
+        },
+        47: {
+            name: "Ran out of Ideas!!!",
+            tooltip: "Get 1,310 Ideas.",
+            done() {return player.i.points.gte(1310)},
+            onComplete() {
+                addPoints('a',3)
+            }
+        },
+        51: {
+            name: "🤯",
+            tooltip: "Get 1,890 Thoughts",
+            done() {return player.t.points.gte(1890)},
+            onComplete() {
+                addPoints('a',3)
+            }
+        },
+        52: {
+            name: "The Ultimate IV",
+            tooltip: "Get 1.00e65 Lesser Ideas",
+            done() {return player.li.points.gte(1e65)},
+            onComplete() {
+                addPoints('a',3)
+            }
+        },
+        53: {
+            name: "True Godlike",
+            tooltip: "Get 1.00e63 Experience<br>Reward: 1,000x to Point gain and 100x to Knowledge.",
+            done() {return player.e.points.gte(1e63)},
+            onComplete() {
+                addPoints('a',3)
+            }
+        },
+        54: {
+            name: "Can't sleep because I have no ideas for names of these.",
+            tooltip: "Get 100,000 Creativity Ideas<br>Reward: Another 1,000x to Point gain.",
+            done() {return player.c.icreativity.gte(100000)},
+            onComplete() {
+                addPoints('a',3)
+            }
+        },
+        55: {
+            name: "Thonk II",
+            tooltip: "Get 35,000 Creativity Thoughts.",
+            done() {return player.c.tcreativity.gte(35000)},
+            onComplete() {
+                addPoints('a',3)
+            }
+        },
+        56: {
+            name: "The Anti-Possible",
+            tooltip: "???<br>Reward: ^1.01 to Point Gain",
+            done() {return inChallenge('t',22) && player.points.gte("1e152")},
+            onComplete() {
+                addPoints('a',3)
+            }
+        },
+        57: {
+            name: "Secretly Challenging",
+            tooltip: "???<br>Reward: ^1.01 to Point Gain",
+            done() {return inChallenge('t',12) && player.points.gte("1e152")},
+            onComplete() {
+                addPoints('a',3)
+            }
         }
     },
     tabFormat: {
         "Achievements": {content:["main-display","blank","achievements"]}
     },
     effect() {
-        return player.a.points.add(1).pow(0.19)
+        if (hasAchievement('a',43)) return player.a.points.add(1).pow(0.35)
+        return player.a.points.add(1).pow(0.2)
     },
     effectDescription() {
+        if (hasAchievement('a',41) && hasAchievement('a',43)) return "(enhanced) which give a " + format(layers.a.effect()) + "x bonus to point and knowledge production."
+        if (hasAchievement('a',41)) return "which give a " + format(layers.a.effect()) + "x bonus to point and knowledge production."
+        if (hasAchievement('a',43)) return "(enhanced) which give a " + format(layers.a.effect()) + "x bonus to point production."
         return "which give a " +format(layers.a.effect())+ "x bonus to point production."
     },
+}),
+addLayer("c", {
+    startData() { return {                  // startData is a function that returns default data for a layer. 
+        unlocked: true,                     // You can add more variables here to add them to your layer.
+        points: new Decimal(0),             // "points" is the internal name for the main resource of the layer.
+        best: new Decimal(0),
+        total: new Decimal(0),
+        progress: new Decimal(0),
+        icreativity: new Decimal(0),
+        tcreativity: new Decimal(0)
+    }},
+
+    color: "#6943BC",                       // The color for this layer, which affects many elements.
+    resource: "creativity",            // The name of this layer's main prestige resource.
+    row: 3,                                 // The row this layer is on (0 is the first row).
+
+    baseResource: "knowledge",                 // The name of the resource your prestige gain is based on.
+    baseAmount() { return player.p.points },  // A function to return the current amount of baseResource.
+
+    requires: new Decimal("1e30"),              // The amount of the base needed to  gain 1 of the prestige currency.
+                                            // Also the amount required to unlock the layer.
+
+    type: "static",                         // Determines the formula used for calculating prestige currency.
+    exponent: 2.8,                          // "normal" prestige gain is (currency^exponent).
+    gainMult() {                            // Returns your multiplier to your gain of the prestige resource.
+        return new Decimal(0.5)               // Factor in any bonuses multiplying gain here.
+    },
+    gainExp() {                             // Returns the exponent to your gain of the prestige resource.
+        return new Decimal(0.5)
+    },
+
+    layerShown() {
+        if (hasMilestone('p',2)) return true
+        if (player.c.points.gte(1)) return true
+        if (hasUpgrade('e',25)) return true
+    },          // Returns a bool for if this layer's node should be visible in the tree.
+    branches: ['t','i'],
+    upgrades: {
+    },
+    effect() {
+        if (player.c.points.gte(1)) return new Decimal(2).pow(player.c.points)
+        else
+        return new Decimal(1)
+    },
+    effectDescription() {
+        return "which boost points by " +format(layers.c.effect())+ "x."
+    },
+    milestones: {
+        0: {
+            requirementDescription: "1 Creativity",
+            effectDescription: "Keep Thought Challenges, keep Idea milestones, keep Experience Upgrades on reset, and unlock a new feature.",
+            done() {
+                return player.c.points.gte(1)
+            }
+
+        },
+        1: {
+            requirementDescription: "2 Creativity",
+            effectDescription: "Keep Knowledge Milestones on <b>ALL</b> resets.",
+            done() {
+                return player.c.points.gte(2)
+            }
+        },
+        2: {
+            requirementDescription: "3 Creativity",
+            effectDescription: "Keep Idea Upgrades.",
+            done() {return player.c.points.gte(3)}
+        },
+        3: {
+            requirementDescription: "4 Creativity",
+            effectDescription: "Automatically reset for Ideas and Thoughts and both reset nothing.",
+            done() {return player.c.points.gte(4)}
+        },
+        4: {
+            requirementDescription: "6 Creativity",
+            effectDescription: "Point gain ^1.1, AGAIN.",
+            done() {return player.c.points.gte(6)}
+        }
+    },
+    canBuyMax() {
+        return true
+    },
+    bars: {
+        creativity: {
+            direction: RIGHT,
+            width: 600,
+            height: 55,
+            progress() {
+                return player.c.progress 
+            },
+        },
+    },
+    clickables: {
+        11: {
+            display() {return "-20%"}, 
+            canClick() {
+                if (player.c.progress.lte(0)) return false
+                else
+                return true
+            },
+            onClick() {
+                player.c.progress = player.c.progress.sub(0.2)
+            }
+        },
+        12: {
+            display() {return "-10%"}, 
+            canClick() {
+                if (player.c.progress.lte(0)) return false
+                else
+                return true
+            },
+            onClick() {
+                player.c.progress = player.c.progress.sub(0.1)
+            }
+        },
+        13: {
+            display() {return "+10%"}, 
+            canClick() {
+                if (player.c.progress.lte(0)) return false
+                else
+                return true
+            },
+            onClick() {
+                player.c.progress = player.c.progress.add(0.1)
+            }
+        },
+        14: {
+            display() {return "+20%"},
+            canClick() {
+                if (player.c.progress.gte(1)) return false
+                else
+                return true
+            },
+            onClick() {
+                player.c.progress = player.c.progress.add(0.2)
+            }
+        }
+    },
+    update(diff) {
+        player.c.icreativity=player.c.icreativity.add(new Decimal(diff).mul(player.c.points.mul(new Decimal(10).pow(new Decimal(1).add(player.c.progress.sub(1))))))
+        player.c.tcreativity=player.c.tcreativity.add(new Decimal(diff).mul(player.c.points.mul(new Decimal(10).pow(new Decimal(1).add(player.c.progress.sub(player.c.progress.mul(2)))))))
+    },
+    tabFormat: {
+        "Main Tab": {content: ["main-display","blank","prestige-button","blank","resource-display","blank","milestones","blank","upgrades"]},
+        "Progress": {content: ["main-display","blank","prestige-button","blank","resource-display","blank",["bar","creativity"],"blank","blank","clickables","blank",["display-text", () => "You have "+format(player.c.tcreativity)+" Creativity Thoughts."],["display-text", () => "You have "+format(player.c.icreativity)+" Creativity Ideas."]], unlocked() {return hasMilestone('c',0)}}
+    },
+    upgrades: {
+        11: {
+            title: "More Features...",
+            description: "Point bonus based on Creativity Ideas.",
+            cost() {return new Decimal("1000")},
+            currencyDisplayName: "Creativity Ideas",
+            currencyLocation() { return player[this.layer] },
+            currencyInternalName: "icreativity",
+            effect() {
+                if (hasUpgrade('c',13)) return player.c.icreativity.add(1).log(new Decimal(4e7).pow(new Decimal(1.10).add(player.c.points.div(100)))).add(1)
+                return player.c.icreativity.add(1).log(5e7).add(1)
+            },
+            effectDisplay() {
+                return "^"+format(upgradeEffect('c',11))
+            }
+        },
+        12: {
+            title: "Running out of Ideas",
+            description: "Point bonus based on Creativity Thoughts.",
+            cost() {return new Decimal("1000")},
+            currencyDisplayName: "Creativity Thoughts",
+            currencyLocation() { return player[this.layer] },
+            currencyInternalName: "tcreativity",
+            effect() {
+                return player.c.tcreativity.add(1).log(1.08).add(1)
+            },
+            effectDisplay() {
+                return +format(upgradeEffect('c',12))+"x"
+            }
+        },
+        13: {
+            title: "Nightmares",
+            description: "First upgrade effect is enhanced by Creativity.",
+            cost() {return new Decimal(15000)},
+            currencyDisplayName: "Creativity Ideas",
+            currencyLocation() { return player[this.layer] },
+            currencyInternalName: "icreativity",
+        }
+    }
 })
