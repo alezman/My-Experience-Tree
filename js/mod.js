@@ -76,7 +76,8 @@ let changelog = `<h1>Changelog:</h1><br>
 		- MORE ACHIEVEMENTS.<br>
 		- Lore for new layer soon coming.<br>
 		- Guide for new layer made :>.<br>
-		- Fixed small bugs.`
+		- Fixed small bugs.
+		- Have no ideas for Achievement names.`
 
 let winText = `Well, you beat the current endgame, soon there will be more updates.`
 
