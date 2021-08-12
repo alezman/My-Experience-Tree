@@ -207,6 +207,11 @@ addLayer("p", {
         if (hasMilestone('li', 0) && resettingLayer == "li") keep.push("upgrades")
         if (hasMilestone('i',2)) keep.push("upgrades")
         if (hasMilestone('c',1)) keep.push("milestones")
+        if (hasMilestone('i',0)) keep.push("milestones")
+        if (player.e.points.gte(1)) keep.push("milestones")
+        if (player.li.points.gte(1)) keep.push("milestones")
+        if (player.t.points.gte(1)) keep.push("milestones")
+        if (player.i.points.gte(1)) keep.push("milestones")
         layerDataReset('p', keep) 
         }    
     },
