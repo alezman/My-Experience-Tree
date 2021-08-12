@@ -1405,7 +1405,7 @@ addLayer("c", {
         11: {
             display() {return "-20%"}, 
             canClick() {
-                if (player.c.progress.lte(0)) return false
+                if (player.c.progress.lte(0.1)) return false
                 else
                 return true
             },
@@ -1427,7 +1427,7 @@ addLayer("c", {
         13: {
             display() {return "+10%"}, 
             canClick() {
-                if (player.c.progress.lte(0)) return false
+                if (player.c.progress.gte(1)) return false
                 else
                 return true
             },
@@ -1438,7 +1438,7 @@ addLayer("c", {
         14: {
             display() {return "+20%"},
             canClick() {
-                if (player.c.progress.gte(1)) return false
+                if (player.c.progress.gte(0.9)) return false
                 else
                 return true
             },
