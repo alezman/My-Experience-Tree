@@ -1,8 +1,8 @@
 let modInfo = {
-	name: "The ??? Tree",
-	id: "mymod",
+	name: "The Tree of Balancing",
+	id: "motivation1",
 	author: "nobody",
-	pointsName: "points",
+	pointsName: "MOTIVATION",
 	modFiles: ["layers.js", "tree.js"],
 
 	discordName: "",
@@ -42,7 +42,7 @@ function getPointGen() {
 	if(!canGenPoints())
 		return new Decimal(0)
 
-	let gain = new Decimal(1)
+	let gain = new Decimal(0.01)
 	return gain
 }
 
@@ -52,6 +52,7 @@ function addedPlayerData() { return {
 
 // Display extra things at the top of the page
 var displayThings = [
+	"MOTIVATION is what keeps you playing this game for so long... You gain MOTIVATION at a very slow rate. You also use MOTIVATION for the main features."
 ]
 
 // Determines when the game "ends"
