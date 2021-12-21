@@ -8,13 +8,13 @@ let modInfo = {
 	discordName: "",
 	discordLink: "",
 	initialStartPoints: new Decimal (10), // Used for hard resets and new players
-	offlineLimit: 24,  // In hours
+	offlineLimit: 0,  // In hours
 }
 
 // Set your version in num and name
 let VERSION = {
-	num: "1.1",
-	name: "The Crafty Update",
+	num: "1.11",
+	name: "Bug Update",
 }
 
 let changelog = `<h1>Changelog:</h1><br>
@@ -23,7 +23,9 @@ let changelog = `<h1>Changelog:</h1><br>
 		- Still making the Toolshed.
 	<h3>v1.1</h3><br>
 	    - Created the Tools.
-		- The Backpack is still not here though.`
+		- The Backpack is still not here though.
+	<h3>v1.11</h3><br>
+	    - No Offline Time (because MOTIVATION grows too much >:c)`
 
 let winText = `Congratulations! You have reached the end and beaten this game, but for now...`
 
