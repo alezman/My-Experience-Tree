@@ -31,6 +31,7 @@ addLayer("f", {
     layerShown(){return true},
     tabFormat:[
         ["infobox", "tutorial"],
+        ["infobox", "exploring"],
         "blank",
         ["display-text", "<h2>Forest</h2><br>This is the place where you begin your journey."],
         "blank",
@@ -49,6 +50,10 @@ addLayer("f", {
                 if (player.f.wAxe == false) player.points = player.points.sub(2)
             },
             canClick() {
+                if (player.t.clickables[11] > 0) return false
+                if (player.t.clickables[12] > 0) return false
+                if (player.f.clickables[13] > 0) return false
+                if (player.f.clickables[12] > 0) return false
                 if (player.f.clickables[11] > 0) return false
                 if (player.f.wAxe == true) return true
                 else if (player.f.wAxe == false && player.points.gte(2)) return true
@@ -70,7 +75,11 @@ addLayer("f", {
                 if (player.f.backpack == false) player.points = player.points.sub(1)
             },
             canClick() {
+                if (player.t.clickables[11] > 0) return false
+                if (player.t.clickables[12] > 0) return false
+                if (player.f.clickables[13] > 0) return false
                 if (player.f.clickables[12] > 0) return false
+                if (player.f.clickables[11] > 0) return false
                 if (player.f.backpack == true) return true
                 else if (player.f.backpack == false && player.points.gte(1)) return true
                 else if (player.f.backpack == false && player.points.lte(0.99)) return false
@@ -91,7 +100,11 @@ addLayer("f", {
                 player.points = player.points.sub(1)
             },
             canClick() {
+                if (player.t.clickables[11] > 0) return false
+                if (player.t.clickables[12] > 0) return false
                 if (player.f.clickables[13] > 0) return false
+                if (player.f.clickables[12] > 0) return false
+                if (player.f.clickables[11] > 0) return false
                 if (player.points.gte(1)) return true
                 if (player.points.lte(0.99)) return false
             },
@@ -134,6 +147,8 @@ addLayer("f", {
         inventory: {
             title: "Your Inventory",
             body() {
+                if (player.f.wAxe) return "Your inventory is limitless and you can carry as much as you'd like.<br><br>You have the <b>Wooden Axe</b><br>Wood: " + formatWhole(player.f.wood) + "<br>Rocks: " + formatWhole(player.f.rocks) + "<br>Sticks: " + formatWhole(player.t.sticks)
+                if (player.t.sticks.gte(1)) return "Your inventory is limitless and you can carry as much as you'd like.<br><br>Wood: " + formatWhole(player.f.wood) + "<br>Rocks: " + formatWhole(player.f.rocks) + "<br>Sticks: " + formatWhole(player.t.sticks)
                 if (player.f.rocks.gte(1)) return "Your inventory is limitless and you can carry as much as you'd like.<br><br>Wood: " + formatWhole(player.f.wood) + "<br>Rocks: " + formatWhole(player.f.rocks)
                 return "Your inventory is limitless and you can carry as much as you'd like.<br><br>Wood: " + formatWhole(player.f.wood)
             }
@@ -141,6 +156,7 @@ addLayer("f", {
         exploring: {
             title: "Things You've Found",
             body() {
+                if (player.f.exploreNumber.gte(4)) return "Through exploring, you can discover new things! However, sometimes, you need to have done something first in order to discover it.<br><br>You've found:<br>The Toolshed."
                 return "Through exploring, you can discover new things! However, sometimes, you need to have done something first in order to discover it."
             }
         }
@@ -154,6 +170,7 @@ addLayer("t", {
     startData() { return {                  // startData is a function that returns default data for a layer. 
         unlocked: true,                     // You can add more variables here to add them to your layer.
         points: new Decimal(0),             // "points" is the internal name for the main resource of the layer.
+        sticks: new Decimal(0)
     }},
 
     color: "#4C3100",                       // The color for this layer, which affects many elements.
@@ -178,7 +195,79 @@ addLayer("t", {
 
     layerShown() { return player.f.exploreNumber.gte(4) },          // Returns a bool for if this layer's node should be visible in the tree.
 
-    upgrades: {
-        // Look in the upgrades docs to see what goes here!
+    clickables: {
+        11: {
+            title: "Transform Wood into Sticks",
+            display() {
+                return "Using a workbench you found here, you can cut your wood into sticks to use with some tools. You don't need MOTIVATION for this one.<br>Remaining Time: " + formatTime(getClickableState('t',11))
+            },
+            canClick() {
+                if (player.t.clickables[12] > 0) return false
+                if (player.f.clickables[13] > 0) return false
+                if (player.f.clickables[12] > 0) return false
+                if (player.f.clickables[11] > 0) return false
+                if (player.t.clickables[11] > 0) return false
+                if (player.f.wood.lte(0.99)) return false
+                else
+                return true
+            },
+            onClick() {
+                setClickableState('t', 11, 2)
+            },
+            onComplete() {
+                player.f.wood = player.f.wood.sub(1)
+                player.t.sticks = player.t.sticks.add(Math.floor(Math.random() * 3)+1)
+            },
+            style() { return {
+                "min-height": "200px",
+                "width" : "200px",
+            }}  
+        },
+        12: {
+            title: "Make the Wooden Axe",
+            display() {
+                return "Using the same workbench, make a wooden axe (the only axe you'll ever be using in your life). The Wooden Axe reduces the cutting trees' time by 2. Also, The Wooden Axe saves your MOTIVATION for <b>something else</b>...<br>Cost:25 wood and 10 sticks.<br>Remaining Time: " + formatTime(getClickableState('t',12))
+            },
+            canClick() {
+                if (player.t.clickables[12] > 0) return false
+                if (player.f.clickables[13] > 0) return false
+                if (player.f.clickables[12] > 0) return false
+                if (player.f.clickables[11] > 0) return false
+                if (player.t.clickables[11] > 0) return false
+                if (player.f.wAxe) return false
+                if (player.f.wAxe==false && player.f.wood.gte(25) && player.t.sticks.gte(10)) return true
+                if (player.t.clickables[11] > 0) return false
+                if (player.f.wood.lte(24.99) && player.t.sticks.lte(9.99)) return false
+            },
+            onClick() {
+                setClickableState('t', 12, 60)
+            },
+            onComplete() {
+                player.f.wAxe = true
+            },
+            style() { return {
+                "min-height": "200px",
+                "width" : "200px",
+            }}  
+        }
+    },
+    tabFormat:[
+        ["display-text", "<h2>Toolshed</h2><br>Here is where you craft tools and stuff..."],
+        "blank",
+        "clickables"
+    ],
+    update(diff) {
+        if(player.t.clickables[11]>0){
+            setClickableState('t',11,Math.max(player.t.clickables[11]-diff,0));
+        if(player.t.clickables[11]==0){
+        layers.t.clickables[11].onComplete()
+        }
+        }
+        if(player.t.clickables[12]>0){
+            setClickableState('t',12,Math.max(player.t.clickables[12]-diff,0));
+        if(player.t.clickables[12]==0){
+        layers.t.clickables[12].onComplete()
+        }
+        }
     },
 })

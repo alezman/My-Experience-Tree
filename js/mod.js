@@ -1,26 +1,29 @@
 let modInfo = {
 	name: "The Tree of Balancing",
 	id: "motivation1",
-	author: "nobody",
+	author: "alez",
 	pointsName: "MOTIVATION",
 	modFiles: ["layers.js", "tree.js"],
 
 	discordName: "",
 	discordLink: "",
 	initialStartPoints: new Decimal (10), // Used for hard resets and new players
-	offlineLimit: 1,  // In hours
+	offlineLimit: 24,  // In hours
 }
 
 // Set your version in num and name
 let VERSION = {
-	num: "0.0",
-	name: "Literally nothing",
+	num: "1.1",
+	name: "The Crafty Update",
 }
 
 let changelog = `<h1>Changelog:</h1><br>
-	<h3>v0.0</h3><br>
-		- Added things.<br>
-		- Added stuff.`
+	<h3>v1.0</h3><br>
+		- Created the Forest and the first 3 tasks.<br>
+		- Still making the Toolshed.
+	<h3>v1.1</h3><br>
+	    - Created the Tools.
+		- The Backpack is still not here though.`
 
 let winText = `Congratulations! You have reached the end and beaten this game, but for now...`
 
