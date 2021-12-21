@@ -244,6 +244,8 @@ addLayer("t", {
             },
             onComplete() {
                 player.f.wAxe = true
+                player.f.wood = player.f.wood.sub(25)
+                player.t.sticks = player.t.sticks.sub(10)
             },
             style() { return {
                 "min-height": "200px",
