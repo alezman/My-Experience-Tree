@@ -10,7 +10,9 @@ addLayer("f", {
         wAxe: false,
         wPAxe: false,
         backpack: false,
-        exploreNumber: new Decimal(0) // This is the amount of times you've used the explore option. It's main purpose is to determine which events you have unlocked.
+        exploreNumber: new Decimal(0), // This is the amount of times you've used the explore option. It's main purpose is to determine which events you have unlocked.
+        spear: false,
+        leather: new Decimal(0)
     }},
     color: "#4BDC13",
     requires: new Decimal(10), // Can be a function that takes requirement increases into account
@@ -43,13 +45,14 @@ addLayer("f", {
     tooltip: "Forest",
     clickables: {
         11: {
-            title: "Cut Wood",
+            title: "Cut Trees",
             display() {return "Chop down a tree using some of your MOTIVATION (unless you have an axe) and receive a random amount of wood.<br>Time: "+formatTime(getClickableState("f",11))},
             onClick(){
                 setClickableState('f', 11, player.f.wAxe?3:6)
-                if (player.f.wAxe == false) player.points = player.points.sub(2)
+                if (player.f.wAxe == false) player.points = player.points.sub(3)
             },
             canClick() {
+                if (player.t.clickables[21] > 0) return false
                 if (player.t.clickables[11] > 0) return false
                 if (player.t.clickables[12] > 0) return false
                 if (player.f.clickables[13] > 0) return false
@@ -72,9 +75,12 @@ addLayer("f", {
             display() {return "Grab rocks with your mere hands using some of your MOTIVATION (unless you have a backpack) and receive a random amount of rocks.<br>Time: "+formatTime(getClickableState("f",12))},
             onClick() {
                 setClickableState('f', 12, player.f.backpack?2:4)
-                if (player.f.backpack == false) player.points = player.points.sub(1)
+                if (player.f.backpack == false) player.points = player.points.sub(2)
             },
             canClick() {
+                if (player.t.clickables[21] > 0) return false
+                if (player.f.clickables[21] > 0) return false
+                if (player.t.clickables[13] > 0) return false
                 if (player.t.clickables[11] > 0) return false
                 if (player.t.clickables[12] > 0) return false
                 if (player.f.clickables[13] > 0) return false
@@ -94,12 +100,15 @@ addLayer("f", {
         },
         13: {
             title: "Explore the Forest",
-            display() {return "You can explore the forest, and you might find something appealing! Costs 1 motivation to explore.<br>Time: "+formatTime(getClickableState("f",13))},
+            display() {return "You can explore the forest, and you might find something appealing! Costs 1 motivation to explore.<br>Time: "+formatTime(getClickableState("f",13))+"<br>You have explored "+formatWhole(player.f.exploreNumber)+" times."},
             onClick() {
                 setClickableState('f', 13, 30)
-                player.points = player.points.sub(1)
+                player.points = player.points.sub(2)
             },
             canClick() {
+                if (player.t.clickables[21] > 0) return false
+                if (player.f.clickables[21] > 0) return false
+                if (player.t.clickables[13] > 0) return false
                 if (player.t.clickables[11] > 0) return false
                 if (player.t.clickables[12] > 0) return false
                 if (player.f.clickables[13] > 0) return false
@@ -115,6 +124,35 @@ addLayer("f", {
                 "min-height": "200px",
                 "width" : "200px",
             }}  
+        },
+        21: {
+            title: "Hunt Animals",
+            display() {return "Using some of your MOTIVATION (or a wooden spear) you can hunt animals and get leather. Costs 2 motivation (0 if has spear).<br>Time: "+formatTime(getClickableState("f",21))},
+            onClick() {
+                setClickableState('f', 21, player.f.spear?5:10)
+                player.points = player.points.sub(3)
+            },
+            canClick() {
+                if (player.t.clickables[21] > 0) return false
+                
+                if (player.f.clickables[21] > 0) return false
+                if (player.t.clickables[13] > 0) return false
+                if (player.t.clickables[11] > 0) return false
+                if (player.t.clickables[12] > 0) return false
+                if (player.f.clickables[13] > 0) return false
+                if (player.f.clickables[12] > 0) return false
+                if (player.f.clickables[11] > 0) return false
+                if (player.points.gte(1)) return true
+                if (player.points.lte(0.99)) return false
+                if (player.f.exploreNumber.eq(4) && player.f.wAxe) return true
+                else return false
+            },
+            onComplete() {
+                player.f.leather = player.f.leather.add(Math.floor(Math.random()*3)+1)
+            },
+            unlocked() {
+                return player.f.exploreNumber.gte(7)
+            }
         }
     },
     update(diff){
@@ -136,6 +174,12 @@ addLayer("f", {
             layers.f.clickables[13].onComplete()
         }
         }
+        if(player.f.clickables[21]>0){
+            setClickableState('f',21,Math.max(player.f.clickables[21]-diff,0));
+        if (player.f.clickables[21]==0){
+            layers.f.clickables[21].onComplete()
+        }
+        }
     },
     infoboxes: {
         tutorial: {
@@ -147,6 +191,9 @@ addLayer("f", {
         inventory: {
             title: "Your Inventory",
             body() {
+                if (player.f.backpack) return "Your inventory is limitless and you can carry as much as you'd like.<br><br>You have the <b>Wooden Axe</b><br>Wood: " + formatWhole(player.f.wood) + "<br>Rocks: " + formatWhole(player.f.rocks) + "<br>Sticks: " + formatWhole(player.t.sticks) + "<br>Leather: " + formatWhole(player.f.leather)
+                if (player.f.leather.gte(1) && !player.f.wAxe) return "Your inventory is limitless and you can carry as much as you'd like.<br><br>Wood: " + formatWhole(player.f.wood) + "<br>Rocks: " + formatWhole(player.f.rocks) + "<br>Sticks: " + formatWhole(player.t.sticks) + "<br>Leather: " + formatWhole(player.f.leather)
+                if (player.f.leather.gte(1) && player.f.wAxe) return "Your inventory is limitless and you can carry as much as you'd like.<br><br>You have the <b>Wooden Axe</b><br>Wood: " + formatWhole(player.f.wood) + "<br>Rocks: " + formatWhole(player.f.rocks) + "<br>Sticks: " + formatWhole(player.t.sticks) + "<br>Leather: " + formatWhole(player.f.leather)
                 if (player.f.wAxe) return "Your inventory is limitless and you can carry as much as you'd like.<br><br>You have the <b>Wooden Axe</b><br>Wood: " + formatWhole(player.f.wood) + "<br>Rocks: " + formatWhole(player.f.rocks) + "<br>Sticks: " + formatWhole(player.t.sticks)
                 if (player.t.sticks.gte(1)) return "Your inventory is limitless and you can carry as much as you'd like.<br><br>Wood: " + formatWhole(player.f.wood) + "<br>Rocks: " + formatWhole(player.f.rocks) + "<br>Sticks: " + formatWhole(player.t.sticks)
                 if (player.f.rocks.gte(1)) return "Your inventory is limitless and you can carry as much as you'd like.<br><br>Wood: " + formatWhole(player.f.wood) + "<br>Rocks: " + formatWhole(player.f.rocks)
@@ -156,8 +203,9 @@ addLayer("f", {
         exploring: {
             title: "Things You've Found",
             body() {
-                if (player.f.exploreNumber.gte(4)) return "Through exploring, you can discover new things! However, sometimes, you need to have done something first in order to discover it.<br><br>You've found:<br>The Toolshed."
-                return "Through exploring, you can discover new things! However, sometimes, you need to have done something first in order to discover it."
+                if (player.f.exploreNumber.gte(7)) return "Through exploring, you can discover new things! However, sometimes, you need to have done something first in order to discover it.<br><br>As of right now, you can <b>discover</b> 2 things using the Explore feature.<br>You've found:<br>The Toolshed.<br>Hunting."
+                if (player.f.exploreNumber.gte(4)) return "Through exploring, you can discover new things! However, sometimes, you need to have done something first in order to discover it.<br><br>As of right now, you can <b>discover</b> 2 things using the Explore feature.<br>You've found:<br>The Toolshed."
+                return "Through exploring, you can discover new things! However, sometimes, you need to have done something first in order to discover it.<br><br>As of right now, you can <b>discover</b> 2 things using the Explore feature."
             }
         }
     },
@@ -202,6 +250,9 @@ addLayer("t", {
                 return "Using a workbench you found here, you can cut your wood into sticks to use with some tools. You don't need MOTIVATION for this one.<br>Remaining Time: " + formatTime(getClickableState('t',11))
             },
             canClick() {
+                if (player.t.clickables[21] > 0) return false
+                if (player.f.clickables[21] > 0) return false
+                if (player.t.clickables[13] > 0) return false
                 if (player.t.clickables[12] > 0) return false
                 if (player.f.clickables[13] > 0) return false
                 if (player.f.clickables[12] > 0) return false
@@ -229,6 +280,9 @@ addLayer("t", {
                 return "Using the same workbench, make a wooden axe (the only axe you'll ever be using in your life). The Wooden Axe reduces the cutting trees' time by 2. Also, The Wooden Axe saves your MOTIVATION for <b>something else</b>...<br>Cost:25 wood and 10 sticks.<br>Remaining Time: " + formatTime(getClickableState('t',12))
             },
             canClick() {
+                if (player.t.clickables[21] > 0) return false
+                if (player.f.clickables[21] > 0) return false
+                if (player.t.clickables[13] > 0) return false
                 if (player.t.clickables[12] > 0) return false
                 if (player.f.clickables[13] > 0) return false
                 if (player.f.clickables[12] > 0) return false
@@ -251,6 +305,65 @@ addLayer("t", {
                 "min-height": "200px",
                 "width" : "200px",
             }}  
+        },
+        13: {
+            title: "Make the Backpack",
+            display() {
+                return "Using the workbench, make a backpack (however, please notice the backpack does not mean more space, as you already have infinite) which can allow you to grab rocks without losing MOTVATION.<br>Cost: 10 leather."
+            },
+            canClick() {
+                if (player.t.clickables[21] > 0) return false
+                if (player.f.clickables[21] > 0) return false
+                if (player.t.clickables[13] > 0) return false
+                if (player.t.clickables[12] > 0) return false
+                if (player.f.clickables[13] > 0) return false
+                if (player.f.clickables[12] > 0) return false
+                if (player.f.clickables[11] > 0) return false
+                if (player.t.clickables[11] > 0) return false
+                if (player.f.leather.gte(10)) return true
+                else return false
+            },
+            onClick() {
+                setClickableState('t', 13, 60)
+            },
+            onComplete() {
+                player.f.backpack = true
+                player.f.leather = player.f.leather.sub(10)
+            },
+            style() { return {
+                "min-height": "200px",
+                "width" : "200px",
+            }}  
+        },
+        21: {
+            title: "Make the Wooden Spear",
+            display() {
+                return "You know, the same thing as above. Costs 5 wood, 10 sticks and 10 rocks."
+            },
+            canClick() {
+                if (player.t.clickables[21] > 0) return false
+                if (player.f.clickables[21] > 0) return false
+                if (player.t.clickables[13] > 0) return false
+                if (player.t.clickables[12] > 0) return false
+                if (player.f.clickables[13] > 0) return false
+                if (player.f.clickables[12] > 0) return false
+                if (player.f.clickables[11] > 0) return false
+                if (player.t.clickables[11] > 0) return false
+                if (player.t.sticks.gte(10) && player.f.wood.gte(5) && player.f.rocks.gte(10)) return true
+                else return false
+            },
+            onClick() {
+                setClickableState('t', 21, 60)
+            },
+            onComplete() {
+                player.f.spear = true
+                player.f.wood = player.f.wood.sub(5)
+                player.f.rocks = player.f.rocks.sub(10)
+                player.t.sticks = player.t.sticks.sub(10)
+            },
+            unlocked() {
+                return player.f.exploreNumber.gte(7)
+            }
         }
     },
     tabFormat:[
@@ -269,6 +382,18 @@ addLayer("t", {
             setClickableState('t',12,Math.max(player.t.clickables[12]-diff,0));
         if(player.t.clickables[12]==0){
         layers.t.clickables[12].onComplete()
+        }
+        }
+        if(player.t.clickables[13]>0){
+            setClickableState('f',13,Math.max(player.t.clickables[13]-diff,0));
+        if (player.t.clickables[13]==0){
+            layers.t.clickables[13].onComplete()
+        }
+        }
+        if(player.t.clickables[21]>0){
+            setClickableState('f',21,Math.max(player.t.clickables[21]-diff,0));
+        if (player.t.clickables[21]==0){
+            layers.t.clickables[21].onComplete()
         }
         }
     },

@@ -13,19 +13,23 @@ let modInfo = {
 
 // Set your version in num and name
 let VERSION = {
-	num: "1.11",
+	num: "1.2",
 	name: "Bug Update",
 }
 
 let changelog = `<h1>Changelog:</h1><br>
-	<h3>v1.0</h3><br>
+	<h3>v1.0</h3><br> (The Release)
 		- Created the Forest and the first 3 tasks.<br>
-		- Still making the Toolshed.
-	<h3>v1.1</h3><br>
+		- Still making the Toolshed.<br><br>
+	<h3>v1.1</h3><br> (The Awfulshed)
 	    - Created the Tools.
 		- The Backpack is still not here though.
 	<h3>v1.11</h3><br>
-	    - No Offline Time (because MOTIVATION grows too much >:c)`
+	    - No Offline Time (because MOTIVATION grows too much >:c)<br><br>
+	<h3>v1.2</h3> (Timewalln't Gaming)<br>
+	    - Added +1 new feature and added all the respective tools.<br>
+		- Also, uhm, I really didn't want to do this, but, thanks to some pressure I made MOTIVATION gain a bit more... faster... (whatever!)
+		(endgame as of now is having the ▒▒▒▒▒▒ ▒▒▒▒▒)`
 
 let winText = `Congratulations! You have reached the end and beaten this game, but for now...`
 
@@ -47,7 +51,8 @@ function getPointGen() {
 	if(!canGenPoints())
 		return new Decimal(0)
 
-	let gain = new Decimal(0.01)
+	let gain = new Decimal(0.1)
+	if (player.points.gte(25)) gain = new Decimal(0)
 	return gain
 }
 
@@ -57,7 +62,7 @@ function addedPlayerData() { return {
 
 // Display extra things at the top of the page
 var displayThings = [
-	"MOTIVATION is what keeps you playing this game for so long... You gain MOTIVATION at a very slow rate. You also use MOTIVATION for the main features."
+	"MOTIVATION is what keeps you playing this game for so long... You gain MOTIVATION at a very slow rate. You also use MOTIVATION for the main features.<br>Uhm, also, MOTIVATION is capped at 25, so you cannot get more... (thanks dlob & downvoid)..."
 ]
 
 // Determines when the game "ends"
