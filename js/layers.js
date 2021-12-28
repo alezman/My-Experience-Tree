@@ -52,6 +52,7 @@ addLayer("f", {
                 if (player.f.wAxe == false) player.points = player.points.sub(3)
             },
             canClick() {
+                if (player.f.clickables[21] > 0) return false
                 if (player.t.clickables[21] > 0) return false
                 if (player.t.clickables[11] > 0) return false
                 if (player.t.clickables[12] > 0) return false
@@ -134,7 +135,6 @@ addLayer("f", {
             },
             canClick() {
                 if (player.t.clickables[21] > 0) return false
-                
                 if (player.f.clickables[21] > 0) return false
                 if (player.t.clickables[13] > 0) return false
                 if (player.t.clickables[11] > 0) return false
@@ -152,7 +152,11 @@ addLayer("f", {
             },
             unlocked() {
                 return player.f.exploreNumber.gte(7)
-            }
+            },
+            style() { return {
+                "min-height": "200px",
+                "width" : "200px",
+            }}  
         }
     },
     update(diff){
@@ -363,7 +367,11 @@ addLayer("t", {
             },
             unlocked() {
                 return player.f.exploreNumber.gte(7)
-            }
+            },
+            style() { return {
+                "min-height": "200px",
+                "width" : "200px",
+            }}  
         }
     },
     tabFormat:[
@@ -385,13 +393,13 @@ addLayer("t", {
         }
         }
         if(player.t.clickables[13]>0){
-            setClickableState('f',13,Math.max(player.t.clickables[13]-diff,0));
+            setClickableState('t',13,Math.max(player.t.clickables[13]-diff,0));
         if (player.t.clickables[13]==0){
             layers.t.clickables[13].onComplete()
         }
         }
         if(player.t.clickables[21]>0){
-            setClickableState('f',21,Math.max(player.t.clickables[21]-diff,0));
+            setClickableState('t',21,Math.max(player.t.clickables[21]-diff,0));
         if (player.t.clickables[21]==0){
             layers.t.clickables[21].onComplete()
         }
