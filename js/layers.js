@@ -192,6 +192,7 @@ addLayer("s", {
             cost: new Decimal(3),
             effect() {
                 let x = player.s.best.add(1).log(10).add(1).pow(0.85).add(1)
+                if (hasMilestone('s', 1)) x = x.mul(milestoneEffect('s',1))
                 return x
             },
             currencyDisplayName: "shelters",
@@ -225,8 +226,12 @@ addLayer("s", {
         },
         1: {
             requirementDescription: "7 shelters",
-            effectDescription: "Start with 250 gwas instead of 10.",
-            done() { return player.s.points.gte(7)}
+            effectDescription: "Upgrade 'Bigger Shelters' is stronger.",
+            done() { return player.s.points.gte(7)},
+            effect() {
+                let x = player.s.points.add(1).pow(0.5).add(1).log(30).add(1)
+                return x
+            }
         }
     }
 })
