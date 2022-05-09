@@ -151,7 +151,7 @@ addLayer("s", {
     exponent: 1.062858, // Prestige currency exponent
     gainMult() { // Calculate the multiplier for main currency from bonuses
         mult = new Decimal(1)
-        if (hasUpgrade('s',12)) mult = mult.mul(upgradeEffect('s',12))
+        if (hasUpgrade('s',12)) mult = mult.div(upgradeEffect('s',12))
         return mult
     },
     gainExp() { // Calculate the exponent on main currency from bonuses
@@ -171,6 +171,7 @@ addLayer("s", {
         ["display-text", () => "You have " + formatWhole(player.s.gwappiness) + " gwa happiness, which is directly multiplying gwa production by " + formatWhole(temp.s.effect) + "x."],
         ["display-text", () => "<h5 style='opacity:0.5'>You're generating " + formatWhole(temp.s.gwappinessRate) + " gwa happiness/s"],
         "blank",
+        "milestones",
         "upgrades",
     ],
     effect() {
@@ -183,6 +184,7 @@ addLayer("s", {
     },
     gwappinessRate() {
         let x = new Decimal(2).pow(player.s.points.sub(1))
+        if (player.s.unlocked == false) x = new Decimal(0)
         return x
     },
     upgrades: {
