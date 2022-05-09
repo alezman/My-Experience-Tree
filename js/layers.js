@@ -117,6 +117,7 @@ addLayer("p", {
             let keep = []
             let specialUpgs = [11]
             if (resettingLayer == 's' && hasMilestone('s', 0)) specialUpgs.push("upgrades")
+            else if (!hasMilestone('s',0))
             layerDataReset('p', keep)
             for(i in specialUpgs) {
                 if (!player[this.layer].upgrades.includes(specialUpgs[i])) {
