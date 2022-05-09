@@ -115,8 +115,9 @@ addLayer("p", {
         if (temp[resettingLayer].row > temp.p.row) {
             // the three lines here
             let keep = []
-            let specialUpgs = [11]
-            if (resettingLayer == 's' && hasMilestone('s', 0)) specialUpgs.push("upgrades")
+            let specialUpgs = []
+            if (resettingLayer == 's' && hasMilestone('s', 0)) specialUpgs.push(11)
+            if (resettingLayer == 's' && hasMilestone('s', 0)) keep.push("upgrades")
             else if (!hasMilestone('s',0))
             layerDataReset('p', keep)
             for(i in specialUpgs) {
@@ -141,7 +142,7 @@ addLayer("s", {
         gwappiness: new Decimal(0),
     }},
     color: "#4C3100",
-    requires: new Decimal(50), // Can be a function that takes requirement increases into account
+    requires: new Decimal(30), // Can be a function that takes requirement increases into account
     resource() {
         if (player.s.points.eq(1)) return "shelter"
         return "shelters"
@@ -195,7 +196,7 @@ addLayer("s", {
             cost: new Decimal(3),
             effect() {
                 let x = player.s.best.add(1).log(10).add(1).pow(0.85).add(1)
-                if (hasMilestone('s', 1)) x = x.mul(milestoneEffect('s',1))
+                if (hasMilestone('s', 1)) x = x.pow(1.05)
                 return x
             },
             currencyDisplayName: "shelters",
@@ -229,12 +230,8 @@ addLayer("s", {
         },
         1: {
             requirementDescription: "7 shelters",
-            effectDescription: "Upgrade 'Bigger Shelters' is stronger.",
+            effectDescription: "Keep all of the gwa producer upgrades (on this layer) and buff 'Bigger Shelters'.",
             done() { return player.s.points.gte(7)},
-            effect() {
-                let x = player.s.points.add(1).pow(0.5).add(1).log(30).add(1)
-                return x
-            }
         }
     }
 })
