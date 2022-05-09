@@ -17,8 +17,8 @@ let modInfo = {
 
 // Set your version in num and name
 let VERSION = {
-	num: "0.1b",
-	name: "gwalease",
+	num: "0.11b",
+	name: "2nd gwalease",
 }
 
 let changelog = `<h1>Changelog:</h1><br>
@@ -28,7 +28,7 @@ let changelog = `<h1>Changelog:</h1><br>
 		- Is a bit different than normal TMT trees.
 		- The tree contains 2 layers by now (05/05/22)
 		- (Spoilers; select text to read) <h4 style="background-color:#E8E8E8;">THE 2ND LAYER "shelters" NOW HAS A MAIN FEATURE SUGGESTED</h4> (thanks to srotpars)<br>
-	<h3>v0.11</h3><h3 style="color:red;"> (beta)</h3><br>
+	<br><h3>v0.11</h3><h3 style="color:red;"> (beta)</h3><br>
 	<h5 style="opacity=0.75">--- The 2nd gwalease ---</h5><br>
 	    - Fixed a lot of bugs (thanks jakub)
 		- Added milestones to the 2nd layer`
