@@ -153,11 +153,12 @@ addLayer("s", {
     exponent: 1.062858, // Prestige currency exponent
     gainMult() { // Calculate the multiplier for main currency from bonuses
         mult = new Decimal(1)
-        if (hasUpgrade('s',12)) mult = mult.div(upgradeEffect('s',12))
         return mult
     },
     gainExp() { // Calculate the exponent on main currency from bonuses
-        return new Decimal(1)
+        exp = new Decimal(1)        
+        if (hasUpgrade('s',12)) exp = exp.mul(upgradeEffect('s',12))
+        return exp
     },
     row: 1, // Row the layer is in on the tree (0 is the first row)
     branches: ['p'],
@@ -206,7 +207,7 @@ addLayer("s", {
             description() {return "Boost shelter gain by " + formatWhole(upgradeEffect('s',12)) + "x."},
             cost: new Decimal(4),
             effect() {
-                let x = player.points.add(1).log(30).add(1).pow(0.75).add(1)
+                let x = player.points.add(1).log(30).add(1).pow(0.75).add(1).mul(3)
                 return x
             },
             currencyDisplayName: "shelters",
